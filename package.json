@@ -1,0 +1,27 @@
+{
+  "name": "bills",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "filter": "tsx bin/index.ts filter"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.13.1",
+  "devDependencies": {
+    "@types/lodash": "^4.17.20",
+    "@types/node": "^24.7.0",
+    "@types/yargs": "^17.0.33",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "csv-parser": "^3.2.0",
+    "lodash": "^4.17.21",
+    "yargs": "^18.0.0"
+  }
+}
