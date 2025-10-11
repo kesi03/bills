@@ -2,6 +2,9 @@ import fs from 'fs';
 import csv from 'csv-parser';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
+import { resolve } from 'path';
+import HtmlExportManager from '../lib/export/html';
+import Calculator from '../lib/calculation';
 
 const argv = yargs(hideBin(process.argv))
   .command('filter', 'Filter CSV by column name', {
@@ -40,11 +43,31 @@ const argv = yargs(hideBin(process.argv))
       .on('end', () => {
         // Output the results as a table
         if (results.length > 0) {
-          console.log(results);
+          console.log(JSON.stringify(results));
+          HtmlExportManager.export(results);
         } else {
           console.log('No matching results found.');
         }
       });
+  })
+  .command('invoice', 'Create invoices', {
+    data: {
+      alias: 'd',
+      description: 'Path to the CSV file',
+      type: 'string',
+      default: 'data/data.csv',
+      demandOption: true,
+    },
+    config: {
+      alias: 'c',
+      description: 'Config file path',
+      type: 'string',
+      default:'data/config.json',
+      demandOption: true,
+    },
+  }, (argv) => {
+    const results: any[] = [];
+    Calculator.startInvoice(argv.data,argv.config)
   })
   .help()
   .argv;

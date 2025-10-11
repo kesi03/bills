@@ -1,0 +1,42 @@
+<table border="1" cellpadding="8" cellspacing="0">
+    <thead>
+        <tr>
+            <th>IDs</th>
+            <th>Customer</th>
+            <th>CRN</th>
+            <th>Appointment Date Time</th>
+            <th>Assessor</th>
+            <th>Method</th>
+            <th>Assessment Type</th>
+            <th>Assessment Centre</th>
+            <th>Cancelled</th>
+            <th>Funder Invoice</th>
+            <th>Paid</th>
+            <th>Supplier Invoice</th>
+            <th>Organisation</th>
+            <th>Status</th>
+            <th>Delay</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each this}}
+        <tr>
+            <td>{{IDs}}</td>
+            <td>{{Customer}}</td>
+            <td>{{CRN}}</td>
+            <td>{{"Appointment Date Time"}}</td>
+            <td>{{Assessor}}</td>
+            <td>{{Method}}</td>
+            <td>{{"Assessment Type"}}</td>
+            <td>{{"Assessment Centre"}}</td>
+            <td>{{Cancelled}}</td>
+            <td>{{"Funder Invoice"}}</td>
+            <td>{{Paid}}</td>
+            <td>{{"Supplier Invoice"}}</td>
+            <td>{{Organisation}}</td>
+            <td>{{Status}}</td>
+            <td>{{Delay}}</td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>
