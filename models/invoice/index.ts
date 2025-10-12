@@ -8,6 +8,8 @@ export enum AssessmentType{
 
 
 export interface IInvoiceItem{
+    id: string;
+    customer: string;
     crn: string;
     appointmentDateTime: Date;
     assessmentType:AssessmentType;
@@ -40,11 +42,15 @@ export interface IInvoiceData {
 }
 
 export class InvoiceItem implements IInvoiceItem{
+    id: string;
+    customer: string;
     crn: string;
     appointmentDateTime: Date;
     assessmentType: AssessmentType;
     amount: number;
-    constructor(crn:string,appointmentDateTime:Date,assessmentType:AssessmentType,amount:number){
+    constructor(id:string,customer:string,crn:string,appointmentDateTime:Date,assessmentType:AssessmentType,amount:number){
+        this.id=id;
+        this.customer=customer;
         this.crn= crn ;
         this.appointmentDateTime= appointmentDateTime;
         this.assessmentType= assessmentType;
@@ -52,11 +58,13 @@ export class InvoiceItem implements IInvoiceItem{
     } 
 
     public static parseFromAssementToInvoice( record:Partial<AssessmentRecord>){
+        const recordId: string = record.id ?? '';
+        const recordCustomer : string = record.customer ?? '';
         const recordCrn:string=record.crn ?? '';
         const recordAppDate: Date = record.appointmentDateTime ?? new Date();
         const assessmentType: AssessmentType= record.assessorAssessmentType ?? AssessmentType.ASSESSMENT;
         const amount: number = record.assessorAmount ?? 0;
-        return new InvoiceItem(recordCrn,recordAppDate,assessmentType,amount);
+        return new InvoiceItem(recordId,recordCustomer,recordCrn,recordAppDate,assessmentType,amount);
     }
 }
 

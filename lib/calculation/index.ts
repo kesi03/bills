@@ -82,7 +82,7 @@ export default class Calculator {
             invoice.address = config.address
             invoice.date=currentDate.toISOString();
             invoice.ref= ref;
-            invoice.period = ref.split('-')[1];
+            invoice.period = `${ref.split('-')[1]}-${ref.split('-')[2]}`;
             invoice.assessments = items.filter((item:InvoiceItem)=>{
                 return item.assessmentType == AssessmentType.ASSESSMENT
             }).map((item:InvoiceItem,index:number,array:InvoiceItem[])=>{

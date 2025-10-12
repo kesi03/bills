@@ -89,7 +89,7 @@ export default class DocManager {
                                     bold: true,
                                 }),
                                 new TextRun({
-                                    text: `${moment(new Date()).format('YYYY-MM-DD')}`,
+                                    text: `${moment(new Date()).format('DD-MM-YYYY')}`,
                                     bold: false,
                                 }),
                             ],
@@ -161,7 +161,7 @@ export default class DocManager {
                 return new TableRow({
                     children: [
                         new TableCell({ children: [new Paragraph(item.crn)] }),
-                        new TableCell({ children: [new Paragraph(`${moment(item.appointmentDateTime).format('YYYY-MM-DD HH:mm')}`)] }),
+                        new TableCell({ children: [new Paragraph(`${moment(item.appointmentDateTime).format('DD-MM-YYYY HH:mm')}`)] }),
                         new TableCell({ children: [new Paragraph(`${DocManager.formatCurrency(item.amount)}`)] }),
                     ],
                 });
