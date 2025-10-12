@@ -3,8 +3,8 @@
         {
             "invoiceNumber":0,
             "date":"2025-10-09T16:56:00.000Z",
-            "period":"may",
-            "ref":"AD-0",
+            "period":"2025-10",
+            "ref":"AD-2025-10",
             "assessments":{
                 "count":0,
                 "amount":0,

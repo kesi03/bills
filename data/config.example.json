@@ -1,0 +1,19 @@
+{
+    "address":{
+        "name":"Kalle",
+        "address":"My Road",
+        "city":"Any where",
+        "postCode":"KT3 3LQ",
+        "epost":"my.name@icloud.com"
+    },
+    "costs":{
+        "cancellation":10,
+        "assessment":20,
+        "review":15
+    },
+    "Assessment Type":{
+        "Full Needs Assessment" :"assessment",
+        "Funded Review (New Condition)":"review"
+    },
+    "Cancelled":true
+}
