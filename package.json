@@ -1,5 +1,5 @@
 {
-  "name": "bills",
+  "name": "@mockholm/bills",
   "version": "1.0.0",
   "description": "",
   "repository": {
@@ -20,7 +20,11 @@
     "compile": "tsc"
   },
   "keywords": [],
-  "author": "kesi03",
+   "author": {
+    "name": "Kester Simm",
+    "email": "68278724+kesi03@users.noreply.github.com",
+    "organization": false
+  },
   "license": "ISC",
   "packageManager": "pnpm@10.13.1",
   "devDependencies": {
