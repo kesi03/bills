@@ -1,19 +1,21 @@
+import { HolidayService } from "../../lib/holiday";
 import { AssessmentRecord } from "../assessment";
 
-export enum AssessmentType{
-    ASSESSMENT,
-    REVIEW,
-    CANCELLATION
+export enum AssessmentType {
+  ASSESSMENT,
+  REVIEW,
+  CANCELLATION
 }
 
 
-export interface IInvoiceItem{
-    id: string;
-    customer: string;
-    crn: string;
-    appointmentDateTime: Date;
-    assessmentType:AssessmentType;
-    amount:number;
+export interface IInvoiceItem {
+  id: string;
+  customer: string;
+  crn: string;
+  appointmentDateTime: Date;
+  completedDateTime: Date;
+  assessmentType: AssessmentType;
+  amount: number;
 }
 
 
@@ -21,7 +23,7 @@ export interface IInvoiceItemGroup {
   title: string;
   count: number;
   amount: number;
-  items: any[]; 
+  items: any[];
 }
 
 export interface IInvoice {
@@ -34,6 +36,7 @@ export interface IInvoice {
   cancelled: IInvoiceItemGroup;
   total: number;
   address: IInvoiceAddress;
+  bank:IInvoiceBank;
 }
 
 export interface IInvoiceData {
@@ -41,31 +44,33 @@ export interface IInvoiceData {
   lastInvoice: number;
 }
 
-export class InvoiceItem implements IInvoiceItem{
-    id: string;
-    customer: string;
-    crn: string;
-    appointmentDateTime: Date;
-    assessmentType: AssessmentType;
-    amount: number;
-    constructor(id:string,customer:string,crn:string,appointmentDateTime:Date,assessmentType:AssessmentType,amount:number){
-        this.id=id;
-        this.customer=customer;
-        this.crn= crn ;
-        this.appointmentDateTime= appointmentDateTime;
-        this.assessmentType= assessmentType;
-        this.amount = amount;
-    } 
+export class InvoiceItem implements IInvoiceItem {
+  id: string;
+  customer: string;
+  crn: string;
+  appointmentDateTime: Date;
+  completedDateTime: Date;
+  assessmentType: AssessmentType;
+  amount: number;
+  constructor(id: string, customer: string, crn: string, appointmentDateTime: Date,completedDateTime: Date, assessmentType: AssessmentType, amount: number) {
+    this.id = id;
+    this.customer = customer;
+    this.crn = crn;
+    this.appointmentDateTime = appointmentDateTime;
+    this.completedDateTime = completedDateTime;
+    this.assessmentType = assessmentType;
+    this.amount = amount;
+  }
 
-    public static parseFromAssementToInvoice( record:Partial<AssessmentRecord>){
-        const recordId: string = record.id ?? '';
-        const recordCustomer : string = record.customer ?? '';
-        const recordCrn:string=record.crn ?? '';
-        const recordAppDate: Date = record.appointmentDateTime ?? new Date();
-        const assessmentType: AssessmentType= record.assessorAssessmentType ?? AssessmentType.ASSESSMENT;
-        const amount: number = record.assessorAmount ?? 0;
-        return new InvoiceItem(recordId,recordCustomer,recordCrn,recordAppDate,assessmentType,amount);
-    }
+  public static parseFromAssementToInvoice(record: Partial<AssessmentRecord>,completedDate:Date) {
+    const recordId: string = record.id ?? '';
+    const recordCustomer: string = record.customer ?? '';
+    const recordCrn: string = record.crn ?? '';
+    const recordAppDate: Date = record.appointmentDateTime ?? new Date();
+    const amount: number = record.assessorAmount ?? 0;
+    const assessmentType: AssessmentType = record.assessorAssessmentType ?? AssessmentType.ASSESSMENT;
+    return new InvoiceItem(recordId, recordCustomer, recordCrn, recordAppDate,completedDate, assessmentType, amount);
+  }
 }
 
 export class InvoiceItemGroup implements IInvoiceItemGroup {
@@ -74,7 +79,7 @@ export class InvoiceItemGroup implements IInvoiceItemGroup {
   amount: number;
   items: any[];
 
-  constructor(title:string,count: number, amount: number, items: any[]) {
+  constructor(title: string, count: number, amount: number, items: any[]) {
     this.title = title;
     this.count = count;
     this.amount = amount;
@@ -82,21 +87,39 @@ export class InvoiceItemGroup implements IInvoiceItemGroup {
   }
 }
 
-export interface IInvoiceAddress{
-    name: string;
-    epost: string;
-    address: string;
-    city: string;
-    postCode: string;
+export interface IInvoiceAddress {
+  name: string;
+  epost: string;
+  workEpost: string;
+  telephone:string;
+  address: string;
+  city: string;
+  postCode: string;
 }
 
-export class InvoiceAddress implements IInvoiceAddress{
+export class InvoiceAddress implements IInvoiceAddress {
   name!: string;
   epost!: string;
+  workEpost!:string;
+  telephone!:string;
   address!: string;
   city!: string;
   postCode!: string;
-  
+
+}
+
+export interface IInvoiceBank{
+  name: string;
+  customer: string;
+  account: string;
+  sortCode: string;
+}
+
+export class InvoiceBank implements IInvoiceBank{
+  name!: string;
+  customer!: string;
+  account!: string;
+  sortCode!: string;
 }
 
 export class Invoice implements IInvoice {
@@ -108,7 +131,8 @@ export class Invoice implements IInvoice {
   reviews!: InvoiceItemGroup;
   cancelled!: InvoiceItemGroup;
   total!: number;
-  address!: InvoiceAddress;  
+  address!: InvoiceAddress;
+  bank!: InvoiceBank
 }
 
 export class InvoiceData implements IInvoiceData {

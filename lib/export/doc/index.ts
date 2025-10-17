@@ -16,6 +16,7 @@ import {
 import _ from "lodash"
 import { Invoice, InvoiceItemGroup } from '../../../models/invoice';
 import moment from 'moment';
+import { createFooter } from './footer';
 
 
 export default class DocManager {
@@ -32,8 +33,8 @@ export default class DocManager {
                     }),
                 },
                 footers: {
-                    default: new Footer({
-                        children: [new Paragraph(
+                    default: createFooter(
+                        [new Paragraph(
                             {
                                 children: [
                                     new TextRun({
@@ -41,24 +42,25 @@ export default class DocManager {
                                         bold: true,
                                     }),
                                 ],
-                            }), new Paragraph(
-                                {
-                                    children: [
-                                        new TextRun({
-                                            text: `Epost: `,
-                                            bold: true,
-                                        }),
-                                        new ExternalHyperlink({
-                                            children: [
-                                                new TextRun({
-                                                    text: `${invoice.address.epost}`,
-                                                    style: "Hyperlink",
-                                                }),
-                                            ],
-                                            link: `mailto:${invoice.address.epost}`,
-                                        }),
-                                    ],
-                                }),
+                            }),
+                        new Paragraph(
+                            {
+                                children: [
+                                    new TextRun({
+                                        text: `Epost: `,
+                                        bold: true,
+                                    }),
+                                    new ExternalHyperlink({
+                                        children: [
+                                            new TextRun({
+                                                text: `${invoice.address.epost}`,
+                                                style: "Hyperlink",
+                                            }),
+                                        ],
+                                        link: `mailto:${invoice.address.epost}`,
+                                    }),
+                                ],
+                            }),
 
                         new Paragraph(
                             {
@@ -72,8 +74,81 @@ export default class DocManager {
                                         bold: false,
                                     }),
                                 ],
-                            }),],
-                    }),
+                            }),
+                        ],
+                        [// 👉 Right-aligned paragraph
+                            new Paragraph({
+                            //    alignment: AlignmentType.RIGHT,
+                                children: [
+                                    new TextRun({
+                                        text: "BANK DETAILS:",
+                                        bold: true,
+                                    }),
+                                    new TextRun({
+                                        text: ` `,
+                                        bold: false,
+                                    }),
+                                    new TextRun({
+                                        text: `${invoice.bank.name}`,
+                                        bold: false,
+                                    }),
+                                ],
+                            }),
+                            new Paragraph({
+                             //   alignment: AlignmentType.RIGHT,
+                                children: [
+                                    new TextRun({
+                                        text: "ACCOUNT NAME:",
+                                        bold: true,
+                                    }),
+                                    new TextRun({
+                                        text: ` `,
+                                        bold: false,
+                                    }),
+                                    new TextRun({
+                                        text: `${invoice.bank.customer}`,
+                                        bold: false,
+                                    }),
+                                ],
+                            }),
+                            new Paragraph({
+                               // alignment: AlignmentType.RIGHT,
+                                children: [
+                                    new TextRun({
+                                        text: "SORT CODE:",
+                                        bold: true,
+                                    }),
+                                    new TextRun({
+                                        text: ` `,
+                                        bold: false,
+                                    }),
+                                    new TextRun({
+                                        text: `${invoice.bank.sortCode}`,
+                                        bold: false,
+                                    }),
+                                ],
+                            }),
+                            new Paragraph({
+                              //  alignment: AlignmentType.RIGHT,
+                                children: [
+                                    new TextRun({
+                                        text: "ACCOUNT NUMBER:",
+                                        bold: true,
+                                    }),
+                                    new TextRun({
+                                        text: ` `,
+                                        bold: false,
+                                    }),
+                                    new TextRun({
+                                        text: `${invoice.bank.account}`,
+                                        bold: false,
+                                    }),
+                                ],
+                            }),
+                        ]
+                    )
+                    ,
+
                 },
                 children: [
                     new Paragraph({
@@ -160,9 +235,12 @@ export default class DocManager {
             const rows = data.items?.map(item => {
                 return new TableRow({
                     children: [
-                        new TableCell({ children: [new Paragraph(item.crn)] }),
-                        new TableCell({ children: [new Paragraph(`${moment(item.appointmentDateTime).format('DD-MM-YYYY HH:mm')}`)] }),
+                        new TableCell({ children: [new Paragraph(item.customer)] }),
+                        new TableCell({ children: [new Paragraph(`${moment(item.appointmentDateTime).format('DD-MM-YYYY')}`)] }),
+                        new TableCell({ children: [new Paragraph(`${moment(item.completedDateTime).format('DD-MM-YYYY')}`)] }),
+                        new TableCell({ children: [new Paragraph(`Remote`)] }),
                         new TableCell({ children: [new Paragraph(`${DocManager.formatCurrency(item.amount)}`)] }),
+                        new TableCell({ children: [new Paragraph(`N/A`)] }),
                     ],
                 });
             });
@@ -179,7 +257,7 @@ export default class DocManager {
                             tableHeader: true,
                             children: [
                                 new TableCell({
-                                    columnSpan: 3, children: [new Paragraph({
+                                    columnSpan: 6, children: [new Paragraph({
                                         children: [
                                             new TextRun({
                                                 text: `${data.title}`,
@@ -197,7 +275,7 @@ export default class DocManager {
                                 children: [new Paragraph({
                                     children: [
                                         new TextRun({
-                                            text: "CRN",
+                                            text: "Student Name",
                                             bold: true,
                                         }),
                                     ],
@@ -207,7 +285,18 @@ export default class DocManager {
                                 children: [new Paragraph({
                                     children: [
                                         new TextRun({
-                                            text: "Date and Time",
+                                            text: "Appointment Date",
+                                            bold: true,
+                                        }),
+                                    ],
+                                })]
+                            })
+                            ,
+                            new TableCell({
+                                children: [new Paragraph({
+                                    children: [
+                                        new TextRun({
+                                            text: "Report Submission Date",
                                             bold: true,
                                         }),
                                     ],
@@ -217,12 +306,32 @@ export default class DocManager {
                                 children: [new Paragraph({
                                     children: [
                                         new TextRun({
-                                            text: "Amount",
+                                            text: "Assessment Type",
                                             bold: true,
                                         }),
                                     ],
                                 })]
                             }),
+                            new TableCell({
+                                children: [new Paragraph({
+                                    children: [
+                                        new TextRun({
+                                            text: "Fee",
+                                            bold: true,
+                                        }),
+                                    ],
+                                })]
+                            }),
+                            new TableCell({
+                                children: [new Paragraph({
+                                    children: [
+                                        new TextRun({
+                                            text: "VAT",
+                                            bold: true,
+                                        }),
+                                    ],
+                                })]
+                            })
                         ],
                         tableHeader: true,
                     }),
@@ -230,6 +339,9 @@ export default class DocManager {
                     new TableRow({
                         children: [
                             new TableCell({ children: [new Paragraph("")] }),
+                            new TableCell({ children: [new Paragraph("")] }),
+                            new TableCell({ children: [new Paragraph("")] }),
+
                             new TableCell({
                                 children: [new Paragraph({
                                     children: [
@@ -250,6 +362,7 @@ export default class DocManager {
                                     ],
                                 }),]
                             }),
+                            new TableCell({ children: [new Paragraph("")] }),
                         ],
                     }),
                 ],

@@ -1,8 +1,9 @@
 import { map } from "lodash";
-import { AssessmentType, IInvoiceAddress, InvoiceAddress } from "../invoice";
+import { AssessmentType, IInvoiceAddress, IInvoiceBank, InvoiceAddress } from "../invoice";
 
 export interface AssessmentConfig {
   address: IInvoiceAddress
+  bank:IInvoiceBank
   costs: {
     cancelled: number;
     assessment: number;
@@ -16,6 +17,7 @@ export interface AssessmentConfig {
 
 export class Config implements AssessmentConfig {
   address: IInvoiceAddress;
+  bank: IInvoiceBank;
   costs: {
     cancelled: number;
     assessment: number;
@@ -29,6 +31,7 @@ export class Config implements AssessmentConfig {
 
   constructor(data: AssessmentConfig) {
     this.address = data.address;
+    this.bank = data.bank;
     this.costs = data.costs;
     this["Assessment Type"] = data["Assessment Type"];
     this.Cancelled = data.Cancelled;
