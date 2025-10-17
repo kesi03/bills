@@ -15,12 +15,8 @@ jobs:
       - name: Setup Node.js v23.11.0
         uses: actions/setup-node@v3
         with:
-          node-version: '23.11.0'
-          registry-url: 'https://registry.npmjs.org/'
-
-      - name: Configure .npmrc
-        run: |
-          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" > ~/.npmrc
+          node-version: "23.11.0"
+          registry-url: "https://registry.npmjs.org/"
 
       - name: Update package.json name via Bash
         run: |
@@ -30,6 +26,11 @@ jobs:
 
       - name: Show updated package.json
         run: cat package.json
+
+      - name: Configure .npmrc
+        run: |
+          echo "@kesi03:registry=https://npm.pkg.github.com/" > ~/.npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> ~/.npmrc
 
       - name: Install pnpm
         uses: pnpm/action-setup@v2
