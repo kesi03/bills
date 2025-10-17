@@ -35,6 +35,6 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish to GitHub Packages
-        run: pnpm publish --registry=https://npm.pkg.github.com/
+        run: pnpm publish --registry=https://npm.pkg.github.com/ --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
