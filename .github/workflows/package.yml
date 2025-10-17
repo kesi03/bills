@@ -22,6 +22,17 @@ jobs:
         run: |
           echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" > ~/.npmrc
 
+      - name: Update package.json name via Bash
+        run: |
+          echo "🔧 Updating package name..."
+          sed -i 's/"name": "@mockholm\/bills"/"name": "@kesi03\/bills"/' package.json
+          echo "✅ package.json name updated to @kesi03/bills"
+
+      - name: Show updated package.json
+        run: cat package.json
+
+
+
       - name: Install pnpm
         uses: pnpm/action-setup@v2
         with:
