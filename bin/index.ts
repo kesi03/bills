@@ -89,7 +89,7 @@ const argv = yargs(hideBin(process.argv))
         alias: 'c',
         description: 'Config file path',
         type: 'string',
-        default: 'data/config-test.json',
+        default: 'data/config.json',
         demandOption: true,
       }),
     async (argv) => {
@@ -113,19 +113,19 @@ const argv = yargs(hideBin(process.argv))
           { type: 'input', name: 'telephone', message: 'Telephone:' },
         ], "address")
 
-      }else{
+      } else {
         completed.push('address');
       }
 
       if (!config.bank || hasEmptyValues(config.bank)) {
         await promptWithRetry(configPath, [
-          { type: 'input', name: 'name', message: 'Bank Name:' , default:`${config.bank.name}`},
-          { type: 'input', name: 'customer', message: 'Customer Name:' ,default:`${config.bank.customer}`},
-          { type: 'input', name: 'sortCode', message: 'Sort Code:',default:`${config.bank.sortCode}` },
-          { type: 'input', name: 'account', message: 'Account Number:',default:`${config.bank.account}` },
+          { type: 'input', name: 'name', message: 'Bank Name:', default: `${config.bank?.name ?? ''}` },
+          { type: 'input', name: 'customer', message: 'Customer Name:', default: `${config.bank?.customer ?? ''}` },
+          { type: 'input', name: 'sortCode', message: 'Sort Code:', default: `${config.bank?.sortCode ?? ''}` },
+          { type: 'input', name: 'account', message: 'Account Number:', default: `${config.bank?.account ?? ''}` },
         ], "bank")
-        
-      }else{
+
+      } else {
         completed.push('bank');
       }
 
@@ -156,81 +156,81 @@ const argv = yargs(hideBin(process.argv))
             filter: (input: any) => parseFloat(input),
           },
         ], "costs")
-        
-      }else{
+
+      } else {
         completed.push('costs');
       }
 
-     if (completed.length !== 0) {
-  const { section } = await inquirer.prompt([
-    {
-      type: 'list',
-      name: 'section',
-      message: 'All sections are complete. Choose one to edit:',
-      choices: ['address', 'bank', 'costs', 'all', 'none'],
-      default:'none'
-    },
-  ]);
+      if (completed.length !== 0) {
+        const { section } = await inquirer.prompt([
+          {
+            type: 'list',
+            name: 'section',
+            message: 'All sections are complete. Choose one to edit:',
+            choices: ['address', 'bank', 'costs', 'all', 'none'],
+            default: 'none'
+          },
+        ]);
 
-  if (section === 'none') {
-    console.log('👍 No changes made. Exiting.');
-    return;
-  }
+        if (section === 'none') {
+          console.log('👍 No changes made. Exiting.');
+          return;
+        }
 
-  const sectionsToEdit = section === 'all' ? ['address', 'bank', 'costs'] : [section];
+        const sectionsToEdit = section === 'all' ? ['address', 'bank', 'costs'] : [section];
 
-  for (const key of sectionsToEdit) {
-    if (key === 'address') {
-      await promptWithRetry(configPath, [
-        { type: 'input', name: 'name', message: 'Name:', default: config.address?.name },
-        { type: 'input', name: 'address', message: 'Street Address:', default: config.address?.address },
-        { type: 'input', name: 'city', message: 'City:', default: config.address?.city },
-        { type: 'input', name: 'postCode', message: 'Post Code:', default: config.address?.postCode },
-        { type: 'input', name: 'epost', message: 'Email:', default: config.address?.epost },
-        { type: 'input', name: 'workEpost', message: 'Work Email:', default: config.address?.workEpost },
-        { type: 'input', name: 'telephone', message: 'Telephone:', default: config.address?.telephone },
-      ], 'address');
-    }
+        for (const key of sectionsToEdit) {
+          if (key === 'address') {
+            await promptWithRetry(configPath, [
+              { type: 'input', name: 'name', message: 'Name:', default: config.address?.name },
+              { type: 'input', name: 'address', message: 'Street Address:', default: config.address?.address },
+              { type: 'input', name: 'city', message: 'City:', default: config.address?.city },
+              { type: 'input', name: 'postCode', message: 'Post Code:', default: config.address?.postCode },
+              { type: 'input', name: 'epost', message: 'Email:', default: config.address?.epost },
+              { type: 'input', name: 'workEpost', message: 'Work Email:', default: config.address?.workEpost },
+              { type: 'input', name: 'telephone', message: 'Telephone:', default: config.address?.telephone },
+            ], 'address');
+          }
 
-    if (key === 'bank') {
-      await promptWithRetry(configPath, [
-        { type: 'input', name: 'name', message: 'Bank Name:', default: config.bank?.name },
-        { type: 'input', name: 'customer', message: 'Customer Name:', default: config.bank?.customer },
-        { type: 'input', name: 'sortCode', message: 'Sort Code:', default: config.bank?.sortCode },
-        { type: 'input', name: 'account', message: 'Account Number:', default: config.bank?.account },
-      ], 'bank');
-    }
+          if (key === 'bank') {
+            await promptWithRetry(configPath, [
+              { type: 'input', name: 'name', message: 'Bank Name:', default: config.bank?.name },
+              { type: 'input', name: 'customer', message: 'Customer Name:', default: config.bank?.customer },
+              { type: 'input', name: 'sortCode', message: 'Sort Code:', default: config.bank?.sortCode },
+              { type: 'input', name: 'account', message: 'Account Number:', default: config.bank?.account },
+            ], 'bank');
+          }
 
-    if (key === 'costs') {
-      await promptWithRetry(configPath, [
-        {
-          type: 'input',
-          name: 'cancellation',
-          message: 'Cancellation Cost:',
-          default: config.costs?.cancellation ?? '7.5',
-          validate: (input: any) => !isNaN(parseFloat(input)) || 'Please enter a valid number',
-          filter: (input: any) => parseFloat(input),
-        },
-        {
-          type: 'input',
-          name: 'assessment',
-          message: 'Assessment Cost:',
-          default: config.costs?.assessment ?? '110',
-          validate: (input: any) => !isNaN(parseFloat(input)) || 'Please enter a valid number',
-          filter: (input: any) => parseFloat(input),
-        },
-        {
-          type: 'input',
-          name: 'review',
-          message: 'Review Cost:',
-          default: config.costs?.review ?? '90',
-          validate: (input: any) => !isNaN(parseFloat(input)) || 'Please enter a valid number',
-          filter: (input: any) => parseFloat(input),
-        },
-      ], 'costs');
-    }
-  }
-}
+          if (key === 'costs') {
+            await promptWithRetry(configPath, [
+              {
+                type: 'input',
+                name: 'cancellation',
+                message: 'Cancellation Cost:',
+                default: config.costs?.cancellation ?? '7.5',
+                validate: (input: any) => !isNaN(parseFloat(input)) || 'Please enter a valid number',
+                filter: (input: any) => parseFloat(input),
+              },
+              {
+                type: 'input',
+                name: 'assessment',
+                message: 'Assessment Cost:',
+                default: config.costs?.assessment ?? '110',
+                validate: (input: any) => !isNaN(parseFloat(input)) || 'Please enter a valid number',
+                filter: (input: any) => parseFloat(input),
+              },
+              {
+                type: 'input',
+                name: 'review',
+                message: 'Review Cost:',
+                default: config.costs?.review ?? '90',
+                validate: (input: any) => !isNaN(parseFloat(input)) || 'Please enter a valid number',
+                filter: (input: any) => parseFloat(input),
+              },
+            ], 'costs');
+          }
+        }
+      }
     }
   )
   .command('copy', 'Copy to clipboard', {
@@ -311,9 +311,6 @@ const argv = yargs(hideBin(process.argv))
         console.log(`File created at ${argv.file}`);
       }
     });
-
-
-
   })
   .help()
   .argv;
