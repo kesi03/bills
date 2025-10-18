@@ -17,10 +17,11 @@
     "invoice": "tsx bin/index.ts invoice",
     "copy": "tsx bin/index.ts copy",
     "holidays": "tsx bin/index.ts holidays",
+     "register": "tsx bin/index.ts register",
     "compile": "tsc"
   },
   "keywords": [],
-   "author": {
+  "author": {
     "name": "Kester Simm",
     "email": "68278724+kesi03@users.noreply.github.com",
     "organization": false
@@ -29,6 +30,7 @@
   "packageManager": "pnpm@10.13.1",
   "devDependencies": {
     "@types/fs-extra": "^11.0.4",
+    "@types/inquirer": "^9.0.9",
     "@types/lodash": "^4.17.20",
     "@types/node": "^24.7.0",
     "@types/yargs": "^17.0.33",
@@ -46,6 +48,7 @@
     "exceljs": "^4.4.0",
     "fs-extra": "^11.3.2",
     "handlebars": "^4.7.8",
+    "inquirer": "^12.10.0",
     "lodash": "^4.17.21",
     "moment": "^2.30.1",
     "yargs": "^17.0.0"
