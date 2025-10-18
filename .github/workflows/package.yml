@@ -12,6 +12,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Update package.json name via Bash
+        run: |
+          echo "🔧 Updating package name..."
+          sed -i 's/"name": "bills"/"name": "@mockholm\/bills"/' package.json
+          echo "✅ package.json name updated to @mockholm/bills"
+
       - name: Setup Node.js v23.11.0
         uses: actions/setup-node@v3
         with:
