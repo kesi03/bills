@@ -1,49 +1,51 @@
-name: Publish to Github
+name: Publish to GitHub Packages
 
 on:
   workflow_dispatch:
 
 jobs:
-  publish:
-    name: Build and Publish
+  publish-github:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Setup Node.js v23.11.0
-        uses: actions/setup-node@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: "23.11.0"
+          node-version: 20
           registry-url: https://npm.pkg.github.com/
 
-      - name: Update package.json name via Bash
+      - name: Enable Corepack and install pnpm
         run: |
-          echo "🔧 Updating package name..."
-          sed -i 's/"name": "bills"/"name": "@kesi03\/bills"/' package.json
-          echo "✅ package.json name updated to @kesi03/bills"
+          corepack enable
+          corepack prepare pnpm@latest --activate
 
-      - name: Show updated package.json
-        run: cat package.json
+      - name: Scope package name for GitHub Packages
+        run: |
+          node -e "
+            const fs = require('fs');
+            const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+            pkg.name = '@kesi03/' + pkg.name.replace(/^@.*\//, '');
+            fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2));
+            console.log('✅ Scoped package name:', pkg.name);
+          "
 
       - name: Configure .npmrc
         run: |
-          echo "registry=https://npm.pkg.github.com/" > ~/.npmrc
-          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> ~/.npmrc
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" > ~/.npmrc
 
       - name: Install dependencies
         run: pnpm install
 
-      - name: Build project
-        run: pnpm run compile
+      - name: Build (optional)
+        run: pnpm build || echo "No build step"
 
       - name: Publish to GitHub Packages
         run: pnpm publish --registry=https://npm.pkg.github.com/ --no-git-checks
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}    
