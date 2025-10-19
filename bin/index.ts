@@ -96,7 +96,6 @@ const argv = yargs(hideBin(process.argv))
         demandOption: true,
       }),
     async (argv) => {
-
       console.log('Config path:', argv.config);
       const configPath = path.resolve(`${argv.config}`);
       const config: any = fs.existsSync(configPath)
