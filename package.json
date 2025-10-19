@@ -1,7 +1,7 @@
 {
   "name": "bills",
   "version": "1.0.4",
-  "description": "",
+  "description": "create, manage and copy invoices from CSV data",
   "repository": {
     "type": "git",
     "url": "https://github.com/kesi03/bills.git"
@@ -20,8 +20,7 @@
     "register": "tsx bin/index.ts register",
     "bump": "tsx bin/index.ts bump",
     "upgrade": "tsx bin/index.ts upgrade",
-    "compile": "tsc",
-    "prepare": "husky"
+    "compile": "tsc"
   },
   "keywords": [],
   "author": {
@@ -38,7 +37,6 @@
     "@types/node": "^24.7.0",
     "@types/semver": "^7.7.1",
     "@types/yargs": "^17.0.33",
-    "husky": "^9.1.7",
     "npm-run-all": "^4.1.5",
     "ts-node": "^10.9.2",
     "tsx": "^4.20.6",
