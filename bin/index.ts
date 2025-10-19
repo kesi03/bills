@@ -322,7 +322,6 @@ const argv = yargs(hideBin(process.argv))
   'upgrade',
   'upgrade the CLI to the latest version',
   (yargs) =>{},
-    
   async (argv) => {
     upgrade();
   }
@@ -330,7 +329,6 @@ const argv = yargs(hideBin(process.argv))
   'bump',
   'bump the version of the CLI',
   (yargs) => {},
-    
   async (argv) => {
     bumpVersion();
   }
