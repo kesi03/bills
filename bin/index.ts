@@ -261,7 +261,7 @@ const argv = yargs(hideBin(process.argv))
     console.log(chalk.hex('#FFA500')('_'.repeat(100)));
     console.log(chalk.cyanBright('\n📋 Pasted content:\n'));
     console.log(chalk.yellowBright(text));
-    console.log(chalk.hex('#FFA500')('_'.repeat(100)+'\n'));
+    console.log(chalk.hex('#FFA500')('_'.repeat(100) + '\n'));
 
 
 
@@ -319,20 +319,20 @@ const argv = yargs(hideBin(process.argv))
     });
   })
   .command(
-  'upgrade',
-  'upgrade the CLI to the latest version',
-  (yargs) =>{},
-  async (argv) => {
-    upgrade();
-  }
-).command(
-  'bump',
-  'bump the version of the CLI',
-  (yargs) => {},
-  async (argv) => {
-    bumpVersion();
-  }
-)
+    'upgrade',
+    'upgrade the CLI to the latest version',
+    (yargs) => { },
+    async (argv) => {
+      upgrade();
+    }
+  ).command(
+    'bump',
+    'bump the version of the CLI',
+    (yargs) => { },
+    async (argv) => {
+      bumpVersion();
+    }
+  )
   .help()
   .argv;
 
