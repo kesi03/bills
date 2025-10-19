@@ -82,6 +82,7 @@ const argv = yargs(hideBin(process.argv))
   }, (argv) => {
     const results: any[] = [];
     const range = []
+    // Read CSV file
     Calculator.startInvoice(argv.data, argv.config)
   })
   .command(
@@ -309,7 +310,7 @@ const argv = yargs(hideBin(process.argv))
       ...yearOne,
       ...yearTwo
     ]
-    
+
     writeFile(`${argv.file}`, JSON.stringify(holidays, null, 2), 'utf8', (err) => {
       if (err) {
         console.error('Error writing file:', err);
