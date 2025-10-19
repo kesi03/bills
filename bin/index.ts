@@ -11,6 +11,8 @@ import { HolidayService } from '../lib/holiday';
 import inquirer from 'inquirer';
 import path from 'path';
 import { hasEmptyValues, promptWithRetry } from '../lib/prompt';
+import chalk from 'chalk';
+import bumpVersion from '../lib/bump';
 
 const timestamp = new Date().toISOString()
   .replace(/:/g, '-')        // Replace colons for Windows compatibility
@@ -255,9 +257,12 @@ const argv = yargs(hideBin(process.argv))
     // 📋 Read text from the clipboard
     const text = clipboard.getText();
 
-    console.log('\n📋 Clipboard content:\n');
-    console.log(text);
-    console.log('\n');
+    console.log(chalk.hex('#FFA500')('_'.repeat(100)));
+    console.log(chalk.cyanBright('\n📋 Pasted content:\n'));
+    console.log(chalk.yellowBright(text));
+    console.log(chalk.hex('#FFA500')('_'.repeat(100)+'\n'));
+
+
 
     const { confirm } = await inquirer.prompt([
       {
@@ -269,7 +274,7 @@ const argv = yargs(hideBin(process.argv))
     ]);
 
     if (!confirm) {
-      console.log('❌ Action cancelled.');
+      console.log(chalk.redBright('❌ Action cancelled.'));
       return;
     }
 
@@ -312,6 +317,23 @@ const argv = yargs(hideBin(process.argv))
       }
     });
   })
+  .command(
+  'upgrade',
+  'upgrade the CLI to the latest version',
+  (yargs) =>
+    
+  async (argv) => {
+    
+  }
+).command(
+  'bump',
+  'bump the version of the CLI',
+  (yargs) => {},
+    
+  async (argv) => {
+    bumpVersion()
+  }
+)
   .help()
   .argv;
 
