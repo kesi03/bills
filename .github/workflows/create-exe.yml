@@ -1,8 +1,7 @@
 name: Build Windows EXE
 
 on:
-  push:
-    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -34,5 +33,5 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: MyApp.exe
-        path: MyApp.exe
+        name: Bills.exe
+        path: Bills.exe
