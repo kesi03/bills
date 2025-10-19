@@ -1,7 +1,8 @@
 name: Build Windows EXE
 
 on:
-  workflow_dispatch:
+  push:
+    branches: [ main ]
 
 jobs:
   build:
@@ -16,17 +17,22 @@ jobs:
       with:
         node-version: '20'
 
+    - name: Install pnpm
+      uses: pnpm/action-setup@v2
+      with:
+        version: 8
+
     - name: Install dependencies
-      run: npm ci
+      run: pnpm install
 
     - name: Compile TypeScript
-      run: npx tsc
+      run: pnpm exec tsc
 
     - name: Build EXE
-      run: npx exe exe.json
+      run: pnpm exec exe exe.json
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: bills-exe
-        path: Bills.exe
+        name: MyApp.exe
+        path: MyApp.exe
