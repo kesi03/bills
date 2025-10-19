@@ -20,15 +20,22 @@ function runCommand(command: string, args: string[], cwd: string): Promise<void>
 }
 
 function getGlobalPackageInfo(pkgName: string): { version: string; path: string } {
-  const output = execSync(`pnpm list -g ${pkgName} --json`, { encoding: 'utf8' });
+  const output = execSync(`pnpm list -g --json`, { encoding: 'utf8' });
   console.log('Raw pnpm list output:', output);
   const parsed = JSON.parse(output);
   console.log('Parsed global package info:', parsed);
-  const pkg = parsed[0];
-  if (!pkg?.version || !pkg?.path) {
+
+  const root = parsed[0];
+  const dep = root?.dependencies?.[pkgName];
+
+  if (!dep?.version || !dep?.path) {
     throw new Error(`Could not find global info for ${pkgName}`);
   }
-  return { version: pkg.version, path: pkg.path };
+
+  return {
+    version: dep.version,
+    path: dep.path,
+  };
 }
 
 export async function upgrade(): Promise<void> {
