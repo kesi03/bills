@@ -82,7 +82,6 @@ const argv = yargs(hideBin(process.argv))
   }, (argv) => {
     const results: any[] = [];
     const range = []
-    // Read CSV file
     Calculator.startInvoice(argv.data, argv.config)
   })
   .command(
