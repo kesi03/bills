@@ -8,6 +8,7 @@
   },
   "homepage": "https://github.com/kesi03/bills#readme",
   "main": "dist/bin/index.js",
+  "type":"module",
   "bin": {
     "bills": "dist/bin/index.js"
   },
