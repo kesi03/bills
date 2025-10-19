@@ -13,6 +13,7 @@ import path from 'path';
 import { hasEmptyValues, promptWithRetry } from '../lib/prompt';
 import chalk from 'chalk';
 import bumpVersion from '../lib/bump';
+import { upgrade } from '../lib/upgrade';
 
 const timestamp = new Date().toISOString()
   .replace(/:/g, '-')        // Replace colons for Windows compatibility
@@ -320,10 +321,10 @@ const argv = yargs(hideBin(process.argv))
   .command(
   'upgrade',
   'upgrade the CLI to the latest version',
-  (yargs) =>
+  (yargs) =>{},
     
   async (argv) => {
-    
+    upgrade();
   }
 ).command(
   'bump',
@@ -331,7 +332,7 @@ const argv = yargs(hideBin(process.argv))
   (yargs) => {},
     
   async (argv) => {
-    bumpVersion()
+    bumpVersion();
   }
 )
   .help()
