@@ -1,11 +1,13 @@
-import { spawn } from 'child_process';
+import { spawn, execSync } from 'child_process';
 import latestVersion from 'latest-version';
-import fs from 'fs';
-import path from 'path';
 
-function runCommand(command: string, args: string[]): Promise<void> {
+function runCommand(command: string, args: string[], cwd: string): Promise<void> {
   return new Promise((resolve, reject) => {
-    const proc = spawn(command, args, { stdio: 'inherit', shell: true });
+    const proc = spawn(command, args, {
+      stdio: 'inherit',
+      shell: true,
+      cwd,
+    });
 
     proc.on('close', (code) => {
       if (code === 0) {
@@ -17,28 +19,35 @@ function runCommand(command: string, args: string[]): Promise<void> {
   });
 }
 
+function getGlobalPackageInfo(pkgName: string): { version: string; path: string } {
+  const output = execSync(`pnpm list -g ${pkgName} --json`, { encoding: 'utf8' });
+  const parsed = JSON.parse(output);
+  const pkg = parsed[0];
+  if (!pkg?.version || !pkg?.path) {
+    throw new Error(`Could not find global info for ${pkgName}`);
+  }
+  return { version: pkg.version, path: pkg.path };
+}
+
 export async function upgrade(): Promise<void> {
-  const pkgPath = path.resolve('package.json');
-  const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
-  const currentVersion = pkg.version;
-  const name = pkg.name;
+  const pkgName = '@mockholm/bills';
+  const { version: currentVersion, path: installPath } = getGlobalPackageInfo(pkgName);
 
-  console.log(`🔍 Checking latest version of ${name}...`);
+  console.log(`🔍 Checking latest version of ${pkgName}...`);
 
-  const latest = await latestVersion(name);
+  console.log(`📂 Currently installed at ${installPath}`);
+
+  const latest = await latestVersion(pkgName);
 
   if (latest === currentVersion) {
     console.log(`✅ Already at latest version (${latest})`);
     return;
   }
 
-  console.log(`⬆️  Upgrading ${name} from ${currentVersion} → ${latest}`);
-
-  pkg.version = latest;
-  fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2));
-
+  console.log(`⬆️  Upgrading ${pkgName} from ${currentVersion} → ${latest}`);
   console.log(`📦 Installing updated version with pnpm...`);
-  await runCommand('pnpm', ['install']);
+
+  await runCommand('pnpm', ['install', '-g', `${pkgName}@${latest}`], process.cwd());
 
   console.log(`🎉 Upgrade complete! Now at version ${latest}`);
 }
