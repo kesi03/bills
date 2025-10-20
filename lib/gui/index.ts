@@ -56,18 +56,46 @@ function getFilesByTimestamp(dirPath: string, afterDate: Date): string[] {
   });
 }
 
+/**
+ * Resolves the absolute path to an asset inside the package.
+ * Works in both dev (`lib/gui`) and built (`dist/lib/gui`) environments.
+ * @param relativePath - Path inside the assets folder (e.g. 'gui/bootstrap/css/style.css')
+ */
+export function resolveAssetPath(relativePath: string): string {
+  const currentDir = __dirname;
+
+  // Try dist-based path first (global install or built project)
+  const distRoot = path.resolve(currentDir, '../../../');
+  const distAssetPath = path.join(distRoot, 'assets', relativePath);
+
+  if (fs.existsSync(distAssetPath)) {
+    return distAssetPath;
+  }
+
+  // Fallback to dev path (project source)
+  const devRoot = path.resolve(currentDir, '../../');
+  const devAssetPath = path.join(devRoot, 'assets', relativePath);
+
+  if (fs.existsSync(devAssetPath)) {
+    return devAssetPath;
+  }
+
+  throw new Error(`Asset not found: ${relativePath}`);
+}
 
 
-function ensureUploadsDirExists() {
-  const uploadDir = path.join(__dirname, '../', 'uploads');
+
+
+function ensureDirExists(dir:string='uploads') {
+  const dirPath = path.join(__dirname, '../', dir);
 
   try {
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-      console.log('Uploads folder created successfully');
+    if (!fs.existsSync(dirPath)) {
+      fs.mkdirSync(dirPath, { recursive: true });
+      console.log(`Directory created successfully: ${dirPath}`);
     }
   } catch (error) {
-    console.error('Error creating uploads folder:', error);
+    console.error(`Error creating directory ${dirPath}:`, error);
   }
 }
 
@@ -79,10 +107,15 @@ function openBrowser(url: string) {
 }
 
 export default function launchGui() {
-  ensureUploadsDirExists();
+  ensureDirExists();
+  ensureDirExists('data');
 
   const app = express();
-  const port = 3000;
+  const isGlobal = !__dirname.startsWith(process.cwd());
+  const port = isGlobal ? 3020 : 3010;
+
+  console.log(`Starting Bills GUI in ${isGlobal ? 'global' : 'local'} mode on port ${port}...`);
+
 
   app.use(express.json()); // Parses JSON
   app.use(express.urlencoded({ extended: true }));
@@ -262,8 +295,10 @@ export default function launchGui() {
     res.send(`File uploaded: ${req.file.filename}`);
   });
 
+
+
   // Serve static files (like HTML, CSS, JS)
-  app.use(express.static(path.join(__dirname, '../../assets/gui')));
+  app.use(express.static(resolveAssetPath('gui')));
 
   app.use('/data', express.static(path.join(__dirname, '../../data')));
 
