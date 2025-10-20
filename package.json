@@ -23,6 +23,10 @@
     "bills": "tsx bin/index.ts",
     "compile": "tsc"
   },
+  "files": [
+  "dist",
+  "assets"
+  ],
   "keywords": [],
   "author": {
     "name": "Kester Simm",
