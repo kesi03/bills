@@ -14,6 +14,7 @@ import { hasEmptyValues, promptWithRetry } from '../lib/prompt';
 import chalk from 'chalk';
 import bumpVersion from '../lib/bump';
 import { upgrade } from '../lib/upgrade';
+import launchGui from '../lib/gui';
 
 const timestamp = new Date().toISOString()
   .replace(/:/g, '-')        // Replace colons for Windows compatibility
@@ -332,5 +333,8 @@ const argv = yargs(hideBin(process.argv))
       bumpVersion();
     }
   )
+  .command('$0', 'Launch GUI', () => {}, () => {
+    launchGui();  
+})
   .help()
   .argv;

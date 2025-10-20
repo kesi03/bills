@@ -21,9 +21,9 @@ function runCommand(command: string, args: string[], cwd: string): Promise<void>
 
 function getGlobalPackageInfo(pkgName: string): { version: string; path: string } {
   const output = execSync(`pnpm list -g --json`, { encoding: 'utf8' });
-  console.log('Raw pnpm list output:', output);
+  //console.log('Raw pnpm list output:', output);
   const parsed = JSON.parse(output);
-  console.log('Parsed global package info:', parsed);
+  //console.log('Parsed global package info:', parsed);
 
   const root = parsed[0];
   const dep = root?.dependencies?.[pkgName];
