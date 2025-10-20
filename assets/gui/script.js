@@ -1,4 +1,5 @@
 
+
 function handleFormSubmit(event) {
   event.preventDefault();
   const formData = new FormData(event.target);
@@ -228,7 +229,8 @@ document.getElementById('submitCsvBtn').addEventListener('click', async () => {
 
     console.log(result)
 
-    try {
+    setTimeout(async () => {
+      try {
       const sinceTimestamp = Date.now(); // Current time in ms
       const response = await fetch(`/api/files/modified-since?since=${sinceTimestamp}`);
 
@@ -245,7 +247,9 @@ document.getElementById('submitCsvBtn').addEventListener('click', async () => {
         const responseContainer = document.getElementById('responseFilesContainer');
         responseContainer.classList.remove('d-none');
         const responseFilesTable = document.getElementById('responseFilesTable');
-        fileData.forEach(file => {
+        fileData.files.
+        filter(file => file.name.endsWith('.xlsx') || file.name.endsWith('.csv')).
+        forEach(file => {
           const body = responseFilesTable.querySelector('tbody') || document.createElement('tbody');
           const tr = document.createElement('tr');
           const tdFileName = document.createElement('td');
@@ -281,6 +285,7 @@ document.getElementById('submitCsvBtn').addEventListener('click', async () => {
     } catch (err) {
       console.error('Error fetching modified files:', err);
     }
+    }, 1000);
   } catch (err) {
     console.error('Submit error:', err);
     alert('Failed to submit data.');
