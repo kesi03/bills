@@ -1,6 +1,6 @@
 {
   "name": "bills",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "create, manage and copy invoices from CSV data",
   "repository": {
     "type": "git",
@@ -24,8 +24,8 @@
     "compile": "tsc"
   },
   "files": [
-  "dist",
-  "assets"
+    "dist",
+    "assets"
   ],
   "keywords": [],
   "author": {
