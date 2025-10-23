@@ -135,6 +135,8 @@ export default function launchGui() {
   const isGlobal = !__dirname.startsWith(process.cwd());
   const port = isGlobal ? 3020 : 3010;
 
+  const dataPath = path.join(process.cwd(), 'data');
+
   console.log(`Starting Bills GUI in ${isGlobal ? 'global' : 'local'} mode on port ${port}...`);
 
 
@@ -143,7 +145,7 @@ export default function launchGui() {
 
 
   app.get('/api/data/config', (req, res) => {
-    const configPath = path.join(__dirname, '../../', 'data/config.json');
+    const configPath = path.join(dataPath, 'config.json');
     console.log('Reading config from:', configPath);
     fs.readFile(configPath, 'utf8', (err, data) => {
       if (err) {
@@ -164,7 +166,7 @@ export default function launchGui() {
   app.get('/api/data/holidays-data', (req, res) => {
     HolidayService.getPublicHolidaysData('2024', 'GB').then((holidays) => {
       // save result to holidays-data.json
-      const holidaysPath = path.join(__dirname, '../../', '/data/holidays-data.json');
+      const holidaysPath = path.join(dataPath, 'holidays-data.json');
       fs.writeFile(holidaysPath, JSON.stringify(holidays, null, 2), (err) => {
         if (err) {
           console.error('Error saving holidays-data.json:', err);
@@ -182,7 +184,7 @@ export default function launchGui() {
   app.get('/api/data/holidays', (req, res) => {
     HolidayService.getPublicHolidays('2024', 'GB').then((holidays) => {
       // save result to holidays.json
-      const holidaysPath = path.join(__dirname, '../../', 'data/holidays.json');
+      const holidaysPath = path.join(dataPath, 'holidays.json');
 
       fs.writeFile(holidaysPath, JSON.stringify(holidays, null, 2), (err) => {
         if (err) {
@@ -201,7 +203,7 @@ export default function launchGui() {
 
   app.post('/api/data/config', (req, res) => {
     const jsonData = req.body;
-    const configPath = path.join(__dirname, '../../', 'data/config.json');
+    const configPath = path.join(dataPath, 'config.json');
 
     fs.writeFile(configPath, JSON.stringify(jsonData, null, 2), 'utf8', (err) => {
       if (err) {
@@ -227,9 +229,9 @@ export default function launchGui() {
       .replace(/:/g, '-')        // Replace colons for Windows compatibility
       .replace(/\..+/, '')       // Remove milliseconds
       .replace('T', '_');        // Replace T with underscore
-    const csvFilePath = `data/data-copied-${timestamp}.csv`;
-    const csvPath = path.join(__dirname, '../../', csvFilePath);
-    const configPath = path.join(__dirname, '../../', 'data/config.json');
+    const csvFilePath = `data-copied-${timestamp}.csv`;
+    const csvPath = path.join(dataPath, csvFilePath);
+    const configPath = path.join(dataPath, 'config.json');
 
     if (!Array.isArray(jsonData) || jsonData.length === 0) {
       return res.status(400).json({ error: 'Invalid or empty JSON array' });
@@ -265,7 +267,7 @@ export default function launchGui() {
       Calculator.startInvoice(csvPath, configPath);
 
       // After calculation, get generated files
-      const generatedFiles = getFilesByTimestamp(path.join(__dirname, '../../', 'data'), moment(new Date(timestamp)).subtract(1, 'days').toDate());
+      const generatedFiles = getFilesByTimestamp(path.join(dataPath), moment(new Date(timestamp)).subtract(1, 'days').toDate());
 
       res.json({
         message: 'Invoice calculation started',
@@ -288,13 +290,13 @@ export default function launchGui() {
 
     const sinceDate = new Date(sinceTimestamp);
 
-    const files = getFilesModifiedAfter(path.join(__dirname, '../../', 'data'), moment(sinceDate).subtract(1, 'days').toDate());
+    const files = getFilesModifiedAfter(dataPath, moment(sinceDate).subtract(1, 'days').toDate());
     res.json({ files });
   });
 
 
   app.get('/api/files', (req, res) => {
-    const files = getFiles(path.join(__dirname, '../../', 'data'));
+    const files = getFiles(dataPath);
     res.json({ files });
   });
 
@@ -326,10 +328,8 @@ export default function launchGui() {
   // Serve static files (like HTML, CSS, JS)
   app.use(express.static(resolveAssetPath('gui')));
 
-  console.log(path.join(process.cwd(), 'data'))
-
   // Serve data files from the current working directory
-  app.use('/data', express.static(path.join(process.cwd(), 'data')));
+  app.use('/data', express.static(dataPath));
 
 
 

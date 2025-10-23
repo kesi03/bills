@@ -1,4 +1,5 @@
 data.csv
+data-copied-*.csv
 config.json
 *.docx
 *.xlsx
