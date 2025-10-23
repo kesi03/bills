@@ -326,8 +326,11 @@ export default function launchGui() {
   // Serve static files (like HTML, CSS, JS)
   app.use(express.static(resolveAssetPath('gui')));
 
-  // Serve data files
-  app.use('/data', express.static(path.join(__dirname, '../../data')));
+  console.log(path.join(process.cwd(), 'data'))
+
+  // Serve data files from the current working directory
+  app.use('/data', express.static(path.join(process.cwd(), 'data')));
+
 
 
   app.listen(port, () => {
