@@ -231,63 +231,113 @@ document.getElementById('submitCsvBtn').addEventListener('click', async () => {
 
     setTimeout(async () => {
       try {
-      const sinceTimestamp = Date.now(); // Current time in ms
-      const response = await fetch(`/api/files/modified-since?since=${sinceTimestamp}`);
+        const sinceTimestamp = Date.now(); // Current time in ms
+        const response = await fetch(`/api/files/modified-since?since=${sinceTimestamp}`);
 
-      if (!response.ok) {
-        throw new Error(`Server responded with ${response.status}`);
+        if (!response.ok) {
+          throw new Error(`Server responded with ${response.status}`);
+        }
+
+        const fileData = await response.json();
+
+        if (!Array.isArray(fileData.files)) {
+          console.warn('Unexpected response format:', fileData);
+        } else {
+          console.log('Generated files:', fileData.files);
+          const responseContainer = document.getElementById('responseFilesContainer');
+          responseContainer.classList.remove('d-none');
+          const responseFilesTable = document.getElementById('responseFilesTable');
+          fileData.files.
+            filter(file => file.name.endsWith('.xlsx') || file.name.endsWith('.csv')).
+            forEach(file => {
+              const body = responseFilesTable.querySelector('tbody') || document.createElement('tbody');
+              const tr = document.createElement('tr');
+              const tdFileName = document.createElement('td');
+              const fileLink = document.createElement('a');
+              fileLink.href = file.url;
+              fileLink.textContent = file.name;
+              fileLink.target = '_blank';
+              fileLink.classList.add('link-warning');
+              tdFileName.appendChild(fileLink);
+              const tdStatus = document.createElement('td');
+              const date = new Date(file.mtime);
+
+              // Format to UK time
+              const ukTime = date.toLocaleString('en-GB', {
+                timeZone: 'Europe/London',
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+              });
+
+
+
+              tdStatus.textContent = ukTime;
+              tr.appendChild(tdFileName);
+              tr.appendChild(tdStatus);
+              body.appendChild(tr);
+            });
+        }
+      } catch (err) {
+        console.error('Error fetching modified files:', err);
       }
-
-      const fileData = await response.json();
-
-      if (!Array.isArray(fileData.files)) {
-        console.warn('Unexpected response format:', fileData);
-      } else {
-        console.log('Generated files:', fileData.files);
-        const responseContainer = document.getElementById('responseFilesContainer');
-        responseContainer.classList.remove('d-none');
-        const responseFilesTable = document.getElementById('responseFilesTable');
-        fileData.files.
-        filter(file => file.name.endsWith('.xlsx') || file.name.endsWith('.csv')).
-        forEach(file => {
-          const body = responseFilesTable.querySelector('tbody') || document.createElement('tbody');
-          const tr = document.createElement('tr');
-          const tdFileName = document.createElement('td');
-          const fileLink = document.createElement('a');
-          fileLink.href = file.url;
-          fileLink.textContent = file.name;
-          fileLink.target = '_blank';
-          fileLink.classList.add('link-warning');
-          tdFileName.appendChild(fileLink);
-          const tdStatus = document.createElement('td');
-          const date = new Date(file.mtime);
-
-      // Format to UK time
-      const ukTime = date.toLocaleString('en-GB', {
-        timeZone: 'Europe/London',
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false
-      });
-
-
-
-      tdStatus.textContent = ukTime;
-      tr.appendChild(tdFileName);
-      tr.appendChild(tdStatus);
-      body.appendChild(tr);
-    });
-      }
-    } catch (err) {
-      console.error('Error fetching modified files:', err);
-    }
     }, 1000);
   } catch (err) {
     console.error('Submit error:', err);
     alert('Failed to submit data.');
   }
 });
+
+function fetchXLSXFile() {
+  // Retrieve the URL from the meta tag
+  const url = document.querySelector('meta[name="xlsx-url"]').getAttribute('content');
+
+  fetch(url)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.arrayBuffer();
+    })
+    .then(data => {
+      const workbook = XLSX.read(data, { type: 'array' });
+      const firstSheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[firstSheetName];
+
+      // Convert to JSON
+      const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+      // Display as Table
+      displayTable(jsonData);
+    })
+    .catch(error => {
+      console.error('Error fetching and parsing the file:', error);
+    });
+}
+
+function displayTable(data) {
+  const tableContainer = document.getElementById('excel-container');
+  let html = '<table class="table table-bordered"><thead><tr>';
+
+  for (const element of data[0]) {
+    html += `<th>${element}</th>`;
+  }
+  html += '</tr></thead><tbody>';
+
+  for (let i = 1; i < data.length; i++) {
+    html += '<tr>';
+    for (const element of data[i]) {
+      html += `<td>${element || ''}</td>`;
+    }
+    html += '</tr>';
+  }
+
+  html += '</tbody></table>';
+  tableContainer.innerHTML = html;
+}
+
+document.addEventListener('DOMContentLoaded', fetchXLSXFile);

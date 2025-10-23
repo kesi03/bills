@@ -5,9 +5,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Bills</title>
+    <meta name="xlsx-url" content="/data/invoice.xlsx"> 
     <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css" />
     <link rel="stylesheet" href="bootstrap-icons/bootstrap-icons.css" />
     <link rel="stylesheet" href="style.css" />
+    <script src="vendors/xlsx.full.min.js"></script>
 
 </head>
 
@@ -46,7 +48,7 @@
                                         aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
-                                    ...
+                                    <div id="excel-container"></div>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary"
