@@ -20,6 +20,27 @@ type FileInfo = {
   url: string;
 };
 
+function getFiles(dirPath: string): FileInfo[] {
+  const fullPath = path.resolve(dirPath);
+  const files = fs.readdirSync(fullPath);
+
+  // Map to file info objects first (so we only stat once per file), then filter by mtime
+  return files.map(file => {
+    const filePath = path.join(fullPath, file);
+    const stats = fs.statSync(filePath);
+    return {
+      name: file,
+      path: filePath,
+      mtime: stats.mtime,
+      url: `/data/${file}`
+    } as FileInfo;
+  }).filter((fileInfo) => {
+    // Add your filtering logic here
+    return (fileInfo.name.includes('.csv') || fileInfo.name.includes('.tsv') || fileInfo.name.includes('.xlsx') || fileInfo.name.includes('.pdf'));
+  });
+}
+
+
 function getFilesModifiedAfter(dirPath: string, afterDate: Date): FileInfo[] {
   const fullPath = path.resolve(dirPath);
   const files = fs.readdirSync(fullPath);
@@ -86,7 +107,7 @@ export function resolveAssetPath(relativePath: string): string {
 
 
 
-function ensureDirExists(dir:string='uploads') {
+function ensureDirExists(dir: string = 'uploads') {
   const dirPath = path.join(__dirname, '../', dir);
 
   try {
@@ -108,7 +129,7 @@ function openBrowser(url: string) {
 
 export default function launchGui() {
   ensureDirExists();
-  ensureDirExists('data');
+  ensureDirExists('../data');
 
   const app = express();
   const isGlobal = !__dirname.startsWith(process.cwd());
@@ -244,33 +265,38 @@ export default function launchGui() {
       Calculator.startInvoice(csvPath, configPath);
 
       // After calculation, get generated files
-          const generatedFiles = getFilesByTimestamp(path.join(__dirname, '../../', 'data'), moment(new Date(timestamp)).subtract(1, 'days').toDate());
+      const generatedFiles = getFilesByTimestamp(path.join(__dirname, '../../', 'data'), moment(new Date(timestamp)).subtract(1, 'days').toDate());
 
-          res.json({
-            message: 'Invoice calculation started',
-            generatedFiles
-          });
+      res.json({
+        message: 'Invoice calculation started',
+        generatedFiles
+      });
     });
   });
 
   app.get('/api/files/modified-since', (req, res) => {
-  const sinceParam = req.query.since;
+    const sinceParam = req.query.since;
 
-  if (!sinceParam) {
-    return res.status(400).json({ error: 'Missing "since" query parameter' });
-  }
+    if (!sinceParam) {
+      return res.status(400).json({ error: 'Missing "since" query parameter' });
+    }
 
-  const sinceTimestamp = Number(sinceParam);
-  if (isNaN(sinceTimestamp)) {
-    return res.status(400).json({ error: 'Invalid timestamp format for "since" parameter' });
-  }
+    const sinceTimestamp = Number(sinceParam);
+    if (isNaN(sinceTimestamp)) {
+      return res.status(400).json({ error: 'Invalid timestamp format for "since" parameter' });
+    }
 
-  const sinceDate = new Date(sinceTimestamp);
+    const sinceDate = new Date(sinceTimestamp);
 
-  const files = getFilesModifiedAfter(path.join(__dirname, '../../', 'data'), moment(sinceDate).subtract(1, 'days').toDate());
-  res.json({ files });
-});
+    const files = getFilesModifiedAfter(path.join(__dirname, '../../', 'data'), moment(sinceDate).subtract(1, 'days').toDate());
+    res.json({ files });
+  });
 
+
+  app.get('/api/files', (req, res) => {
+    const files = getFiles(path.join(__dirname, '../../', 'data'));
+    res.json({ files });
+  });
 
 
 
@@ -300,7 +326,9 @@ export default function launchGui() {
   // Serve static files (like HTML, CSS, JS)
   app.use(express.static(resolveAssetPath('gui')));
 
+  // Serve data files
   app.use('/data', express.static(path.join(__dirname, '../../data')));
+
 
   app.listen(port, () => {
     console.log(`Bills GUI is running at http://localhost:${port}`);

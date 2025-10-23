@@ -1,0 +1,80 @@
+<table class="table">
+    <tbody>
+        <tr>
+            <th colspan="3">{invoice.address?.name || ''}</th>
+        </tr>
+        <tr>
+            <th>ADDRESS</th>
+            <td colspan="2">{invoice.address?.address || ''}</td>
+        </tr>
+        <tr>
+            <th>EMAIL</th>
+            <td>{invoice.address?.email || ''}</td>
+            <td>{invoice.address?.workEmail || ''}</td>
+        </tr>
+        <tr>
+            <th>TELEPHONE</th>
+            <td colspan="2">{invoice.address?.telephone || ''}</td>
+        </tr>
+        <tr>
+            <th>DATE OF INVOICE</th>
+            <td colspan="2">{invoice.date || ''}</td>
+        </tr>
+        <tr>
+            <th>INVOICE NUMBER</th>
+            <td colspan="2">{invoice.number || ''}</td>
+        </tr>
+    </tbody>
+</table>
+<table class="table">
+    <thead>
+        <tr>
+            <th>PO</th>
+            <th>Student Name</th>
+            <th>Assessment Date</th>
+            <th>Report Submission Date</th>
+            <th>Assessment Type</th>
+            <th>Fee</th>
+            <th>Vat?</th>
+        </tr>
+    </thead>
+    <tbody>
+        {#each invoice.items as item}
+        <tr>
+            <td>{item.po}</td>
+            <td>{item.studentName}</td>
+            <td>{item.assessmentDate}</td>
+            <td>{item.reportSubmissionDate}</td>
+            <td>{item.assessmentType}</td>
+            <td>{item.fee}</td>
+            <td>{item.vat}</td>
+        </tr>
+        {/each}
+    </tbody>
+    <tfoot>
+        <tr>
+            <th colspan="6">Total</th>
+            <td>{invoice.total}</td>
+        </tr>
+    </tfoot>
+</table>
+<table class="table">
+    <tbody>
+        <tr>
+            <th colspan="3">BANK DETAILS:</th>
+            <td>{invoice.bank?.name || ''}</td>
+        </tr>
+        <tr>
+            <th colspan="3">ACCOUNT NAME:</th>
+            <td>{invoice.bank?.customer || ''}</td>
+        </tr>
+        <tr>
+            <th colspan="3">SORT CODE:</th>
+            <td>{invoice.bank?.sortCode || ''}</td>
+        </tr>
+        <tr>
+            <th colspan="3">ACCOUNT NUMBER:</th>
+            <td>{invoice.bank?.account || ''}</td>
+        </tr>
+    </tbody>
+</table>

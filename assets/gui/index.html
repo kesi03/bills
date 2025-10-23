@@ -5,12 +5,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Bills</title>
-    <meta name="xlsx-url" content="/data/invoice.xlsx"> 
+    <meta name="xlsx-url" content="/data/invoices.xlsx">
     <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css" />
     <link rel="stylesheet" href="bootstrap-icons/bootstrap-icons.css" />
     <link rel="stylesheet" href="style.css" />
     <script src="vendors/xlsx.full.min.js"></script>
-
+    <script src="vendors/tablesort.min.js"></script>
 </head>
 
 <body>
@@ -25,11 +25,11 @@
                         <li class="nav-item" role="presentation"><a href="#" class="nav-link px-2 text-warning"
                                 data-bs-toggle="pill" data-bs-target="#pills-home">Home</a></li>
                         <li class="nav-item" role="presentation"><a href="#" class="nav-link px-2 text-white"
-                                data-bs-toggle="pill" data-bs-target="#pills-config">Configuration</a></li>
-                        <li class="nav-item" role="presentation"><a href="#" class="nav-link px-2 text-white"
                                 data-bs-toggle="pill" data-bs-target="#pills-invoice">Invoice</a></li>
                         <li class="nav-item" role="presentation"><a href="#" class="nav-link px-2 text-white"
-                                data-bs-toggle="pill" data-bs-target="#pills-faqs">FAQs</a></li>
+                                data-bs-toggle="pill" data-bs-target="#pills-faqs">Files</a></li>
+                        <li class="nav-item" role="presentation"><a href="#" class="nav-link px-2 text-white"
+                                data-bs-toggle="pill" data-bs-target="#pills-config">Configuration</a></li>
                         <li class="nav-item" role="presentation"><a href="#" class="nav-link px-2 text-white"
                                 data-bs-toggle="pill" data-bs-target="#pills-about">About</a></li>
                     </ul>
@@ -48,7 +48,7 @@
                                         aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <div id="excel-container"></div>
+
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary"
@@ -73,18 +73,25 @@
                     </nav>
 
                     <div class="card text-center">
-                        <div class="card-header">
-                            Home Content
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">Special title treatment</h5>
-                            <p class="card-text">With supporting text below as a natural lead-in to additional content.
-                            </p>
+                        <div class="card-header excel-green">
+                            <h5 class="mb-0">Invoices</h5>
+
 
                         </div>
-                        <div class="card-footer text-body-secondary">
-                            <a href="#" class="btn btn-warning">Paste</a>
+                        <div class="card-body">
+                            <div class="tab-content" id="sheet-tab-content">
+                                <!-- Tab panes will be injected here -->
+                            </div>
+
+
                         </div>
+
+                        <div class="card-footer excel-green">
+                            <ul class="nav nav-tabs" role="tablist" id="sheet-tab-nav">
+                                <!-- Tab buttons will be injected here -->
+                            </ul>
+                        </div>
+
                     </div>
                 </div>
                 <div class="tab-pane fade" id="pills-config" role="tabpanel" aria-labelledby="pills-config-tab"
@@ -145,7 +152,7 @@
                         <li class="breadcrumb-item"><a href="#">Home</a></li>
                         <li class="breadcrumb-item active"><a href="#">Invoice</a></li>
                     </ol>
-                    <button class="btn btn-warning mb-3" id="pasteCsvBtn">Paste CSV</button> 
+                    <button class="btn btn-warning mb-3" id="pasteCsvBtn">Paste CSV</button>
                     <button class="btn btn-success mb-3 d-none" id="submitCsvBtn">Create invoices</button>
                     <div id="csvTableContainer"></div>
                     <div id="responseFilesContainer" class="d-none">
@@ -153,56 +160,86 @@
                             <h5 class="card-title">Generated Files</h5>
                             <p class="card-text">The following files have been generated based on the submitted CSV
                                 data.</p>
-                               
-                        <table id="responseFilesTable" class="table table-dark table-hover">
-                            <thead></thead>
-                            <tr>
-                                <th>File Name</th>
-                                <th>Created</th>
-                            </tr>
+
+                            <table id="responseFilesTable" class="table table-dark table-hover">
+                                <thead></thead>
+                                <tr>
+                                    <th>File Name</th>
+                                    <th>Created</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="pills-faqs" role="tabpanel" aria-labelledby="pills-faqs-tab"
+                    tabindex="0">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="#">Home</a></li>
+                            <li class="breadcrumb-item active"><a href="#">Files</a></li>
+                        </ol>
+                    </nav>
+                    <div class="card text-bg-success mb-3">
+                        <div class="card-header">
+                            <h5 class="mb-0">Files</h5>
+                        </div>
+                        <table id="file-table"
+                            class="card-body table table-sm table-dark table-hover text-bg-success sortable">
+                            <thead>
+                                <tr>
+                                    <th>File Name</th>
+                                    <th>Created</th>
+                                </tr>
                             </thead>
                             <tbody>
                             </tbody>
                         </table>
-                        </div>
-   
                     </div>
-                 
-                    <div class="tab-pane fade" id="pills-faqs" role="tabpanel" aria-labelledby="pills-faqs-tab"
-                        tabindex="0">
-                        <nav aria-label="breadcrumb">
-                            <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                                <li class="breadcrumb-item active"><a href="#">FAQs</a></li>
-                            </ol>
-                        </nav>
-                        FAQs Content
-                    </div>
-                    <div class="tab-pane fade" id="pills-about" role="tabpanel" aria-labelledby="pills-about-tab"
-                        tabindex="0">
-                        <nav aria-label="breadcrumb">
-                            <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                                <li class="breadcrumb-item active"><a href="#">About</a></li>
-                            </ol>
-                        </nav>
-                        About Content
-                    </div>
+
+                </div>
+                <div class="tab-pane fade" id="pills-about" role="tabpanel" aria-labelledby="pills-about-tab"
+                    tabindex="0">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="#">Home</a></li>
+                            <li class="breadcrumb-item active"><a href="#">About</a></li>
+                        </ol>
+                    </nav>
+                    About Content
                 </div>
             </div>
-            <div class="container">
-                <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
-                    <div class="col-md-4 d-flex align-items-center"> <a href="/"
-                            class="mb-3 me-2 mb-md-0 text-body-secondary text-decoration-none lh-1"
-                            aria-label="Bootstrap">
-                            <h1 class="bi bi-journal-richtext"></h1>
-                        </a> <span class="mb-3 mb-md-0 text-body-secondary">© 2025 Bills</span> </div>
+        </div>
+        <div class="container">
+            <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+                <div class="col-md-4 d-flex align-items-center"> <a href="/"
+                        class="mb-3 me-2 mb-md-0 text-body-secondary text-decoration-none lh-1" aria-label="Bootstrap">
+                        <h1 class="bi bi-journal-richtext"></h1>
+                    </a> <span class="mb-3 mb-md-0 text-body-secondary">© 2025 Bills</span> </div>
 
-                </footer>
-            </div>
+            </footer>
+        </div>
     </main>
     <script src="bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="script.js"></script>
+    <!-- Modal -->
+    <div class="modal fade" id="invoiceModal" tabindex="-1" aria-labelledby="invoiceLabel" aria-hidden="true" style="min-width: 800px;font-size: smaller;">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="invoiceLabel">Invoice Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="invoiceContent">
+                    <!-- Dynamic content goes here -->
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>
