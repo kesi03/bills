@@ -10,6 +10,7 @@ import DocManager from '../export/doc';
 import ExcelManager from '../export/excel';
 import moment from 'moment';
 import { HolidayService } from '../holiday';
+import { Payload } from '../../models/payload';
 
 export default class Calculator {
     public static async startInvoice(dataPath: string, configPath: string, range?: number[]) {
@@ -184,5 +185,10 @@ export default class Calculator {
         }
         await ExcelManager.createOrUpdateExcel(invoices);
         await ExcelManager.createOrUpdateFromtemplate(invoices);
+    }
+
+    public static async updateInvoice(Payload:Payload, Config:Config): Promise<void> {
+        await ExcelManager.updateInvoicesExcel(Payload);
+        await ExcelManager.updateInvoice(Payload, Config);
     }
 }

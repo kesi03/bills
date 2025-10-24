@@ -323,7 +323,28 @@ export default function launchGui() {
     res.send(`File uploaded: ${req.file.filename}`);
   });
 
+  //update invoice
+  app.post('/api/invoice/update', (req, res) => {
+    const jsonData = req.body;
+    const configPath = path.join(dataPath, 'config.json');  
+    if (!jsonData || Object.keys(jsonData).length === 0) {
+      return res.status(400).json({ error: 'Invalid or empty JSON object' });
+    } 
 
+    console.log(jsonData);
+    // Load config
+    fs.readFile(configPath, 'utf8', async (err, data) => {
+      if (err) {
+        console.error('Error reading config.json:', err);
+        return res.status(500).json({ error: 'Failed to load configuration' });
+      }
+
+      const config = JSON.parse(data);
+      // Update the invoice using the loaded config
+      await Calculator.updateInvoice(jsonData, config);
+      res.json({ message: 'Invoice updated successfully' });
+    });
+  });
 
   // Serve static files (like HTML, CSS, JS)
   app.use(express.static(resolveAssetPath('gui')));

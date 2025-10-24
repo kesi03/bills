@@ -1,10 +1,13 @@
-import { resolve } from "path";
+import { parse, resolve } from "path";
 import ExcelJS from 'exceljs';
 import fs from 'fs';
 import { AssessmentType, Invoice, InvoiceItem, InvoiceItemGroup } from "../../../models/invoice";
-import _ from 'lodash'
+import _, { get } from 'lodash'
 import moment from "moment";
 import { Styles } from "../../../style/excel";
+import { Payload } from "../../../models/payload";
+import { Config } from "../../../models/config";
+import DocManager from "../doc";
 
 
 
@@ -52,13 +55,13 @@ export default class ExcelManager {
                 sheet.getCell('B8').style = Styles.bold;
                 sheet.getCell('C8').value = invoice.ref
                 sheet.getCell('C8').style = Styles.normal
-                
+
 
                 // table header
                 sheet.getRow(10).height = 20
                 sheet.getCell('B10').value = 'PO'
                 sheet.getCell('B10').style = Styles.tableHeader;
-                
+
                 sheet.getCell('C10').value = 'Student Name'
                 sheet.getCell('C10').style = Styles.tableHeader;
                 sheet.getCell('D10').value = 'Assessment Date'
@@ -79,10 +82,10 @@ export default class ExcelManager {
                 ];
 
                 const startRow: number = 11;
-                let rowIndex:number = 0;
+                let rowIndex: number = 0;
 
-                items.forEach((item:InvoiceItem,index:number)=>{
-                    rowIndex=startRow+index;
+                items.forEach((item: InvoiceItem, index: number) => {
+                    rowIndex = startRow + index;
                     sheet.getCell(`C${rowIndex}`).value = item.customer;
                     sheet.getCell(`C${rowIndex}`).style = Styles.normal;
                     sheet.getCell(`D${rowIndex}`).value = item.appointmentDateTime.toLocaleDateString('en-GB');
@@ -110,7 +113,7 @@ export default class ExcelManager {
                 sheet.getCell(`G${totalRowIndex}`).style = Styles.normal;
                 sheet.getCell(`G${totalRowIndex}`).numFmt = `"£"#,##0.00;[Red]-"£"#,##0.00`
 
-                let bankRow :number = totalRowIndex+3;
+                let bankRow: number = totalRowIndex + 3;
 
                 //bank details
 
@@ -173,12 +176,14 @@ export default class ExcelManager {
             'crn': 1,
             'id': 2,
             'customer': 3,
-            'date': 4,
-            'amount': 5,
-            'period': 6,
-            'type': 7,
-            'invoiced': 8,
-            'invoice': 9
+            'assessment': 4,
+            'submitted': 5,
+            'fee': 6,
+            'period': 7,
+            'type': 8,
+            'invoiced': 9,
+            'invoice': 10,
+            'excluded': 11
         };
 
         if (!sheet) {
@@ -187,12 +192,14 @@ export default class ExcelManager {
                 { header: 'CRN', key: 'crn', width: 15 },
                 { header: 'id', key: 'id', width: 10 },
                 { header: 'Customer', key: 'customer', width: 20 },
-                { header: 'Date', key: 'date', width: 20 },
-                { header: 'Amount', key: 'amount', width: 10 },
+                { header: 'Assessment', key: 'assessment', width: 20 },
+                { header: 'Submitted', key: 'submitted', width: 20 },
+                { header: 'Fee', key: 'fee', width: 10 },
                 { header: 'Period', key: 'period', width: 20 },
                 { header: 'Type', key: 'type', width: 20 },
                 { header: 'Invoiced', key: 'invoiced', width: 20 },
                 { header: 'Invoice', key: 'invoice', width: 20 },
+                { header: 'Excluded', key: 'excluded', width: 10 },
             ];
         }
 
@@ -221,31 +228,149 @@ export default class ExcelManager {
                 if (existingRow) {
                     existingRow.getCell(columnMap['id']).value = item.id;
                     existingRow.getCell(columnMap['customer']).value = item.customer;
-                    existingRow.getCell(columnMap['date']).value = `${moment(item.appointmentDateTime).format('DD-MM-YYYY HH:mm')}`;
-                    existingRow.getCell(columnMap['amount']).value = item.amount;
-                    existingRow.getCell(columnMap['amount']).numFmt = `"£"#,##0.00;[Red]-"£"#,##0.00`
+                    existingRow.getCell(columnMap['assessment']).value = `${moment(item.appointmentDateTime).format('DD-MM-YYYY HH:mm')}`;
+                    existingRow.getCell(columnMap['submitted']).value = `${moment(item.completedDateTime).format('DD-MM-YYYY')}`;
+                    existingRow.getCell(columnMap['fee']).value = item.amount;
+                    existingRow.getCell(columnMap['fee']).numFmt = `"£"#,##0.00;[Red]-"£"#,##0.00`
                     existingRow.getCell(columnMap['period']).value = invoice.period;
                     existingRow.getCell(columnMap['type']).value = `${AssessmentType[item.assessmentType]}`;
                     existingRow.getCell(columnMap['invoiced']).value = `${moment(invoice.date).format('DD-MM-YYYY')}`;
                     existingRow.getCell(columnMap['invoice']).value = invoice.ref;
+                    existingRow.getCell(columnMap['excluded']).value = 'no';
                 } else {
                     const newRow = sheet.addRow({
                         crn: item.crn,
                         id: item.id,
                         customer: item.customer,
-                        date: `${moment(item.appointmentDateTime).format('DD-MM-YYYY HH:mm')}`,
-                        amount: item.amount,
+                        assessment: `${moment(item.appointmentDateTime).format('DD-MM-YYYY HH:mm')}`,
+                        submitted: `${moment(item.completedDateTime).format('DD-MM-YYYY')}`,
+                        fee: item.amount,
                         period: invoice.period,
                         type: `${AssessmentType[item.assessmentType]}`,
                         invoiced: `${moment(invoice.date).format('DD-MM-YYYY')}`,
                         invoice: invoice.ref,
+                        excluded: 'no',
                     }
                     );
-                    newRow.getCell(columnMap['amount']).numFmt = `"£"#,##0.00;[Red]-"£"#,##0.00`
+                    newRow.getCell(columnMap['fee']).numFmt = `"£"#,##0.00;[Red]-"£"#,##0.00`
                 }
             });
         }
     }
 
 
+    public static async updateInvoicesExcel(payload: Payload): Promise<void> {
+        const filePath = resolve('data/invoices.xlsx');
+        const workbook = new ExcelJS.Workbook();
+
+        if (!fs.existsSync(filePath)) {
+            console.warn(`Excel file not found at ${filePath}`);
+            return;
+        }
+
+        await workbook.xlsx.readFile(filePath);
+
+        const getColumn = (sheet: ExcelJS.Worksheet, 
+            columnName: string) => {
+             const headerRow = sheet.getRow(1);
+            const headerValues = Array.isArray(headerRow.values) ? headerRow.values : [];
+            const columnIndex = headerValues.findIndex(v => String(v) === String(columnName));
+            if (columnIndex === -1) {
+                console.warn(`Column "${columnName}" not found in sheet "${sheet.name}".`);
+                return -1;
+            }
+            return columnIndex;
+        };
+
+        const updateSheet = (sheetName: string) => {
+            const sheet = workbook.getWorksheet(sheetName);
+            if (!sheet) {
+                console.warn(`Sheet "${sheetName}" not found.`);
+                return;
+            }
+
+            const columnIndex = getColumn(sheet, payload.key);
+            if (columnIndex === -1) return;
+
+            let targetRow: ExcelJS.Row | undefined;
+            sheet.eachRow((row) => {
+                if (row.getCell(1).value === payload.id) {
+                    targetRow = row;
+                }
+            });
+
+            if (!targetRow) {
+                console.warn(`Row with ID "${payload.id}" not found in sheet "${sheetName}".`);
+                return;
+            }
+
+            targetRow.getCell(columnIndex).value = payload.value;
+            targetRow.commit();
+        };
+
+        updateSheet('ALL');
+        updateSheet(payload.ref);
+
+        await workbook.xlsx.writeFile(filePath);
+    }
+
+    public static async updateInvoice(payload: Payload, config:Config): Promise<void> {
+        const filePath = resolve('data/invoices.xlsx');
+        const workbook = new ExcelJS.Workbook();
+
+        if (!fs.existsSync(filePath)) {
+            console.warn(`Excel file not found at ${filePath}`);
+            return;
+        }
+
+        await workbook.xlsx.readFile(filePath);
+
+        let sheet = workbook.getWorksheet(payload.ref);
+        if (!sheet) {
+            console.warn(`Sheet "${payload.ref}" not found.`);
+            return
+        }
+
+        const invoices: Invoice[] = [];
+
+        const invoice: Invoice = new Invoice();
+        invoice.ref = payload.ref;
+        invoice.address = config.address;
+        invoice.bank = config.bank;
+        invoice.date = new Date().toISOString();
+
+        const items: InvoiceItem[] = [];
+
+        
+
+        sheet.eachRow((row, rowNumber) => {
+            if (rowNumber === 1) return; // skip header row
+            if(row.getCell(11).value !== 'no') return; // skip excluded rows
+
+            const appointmentDateTime = row.getCell(4).value as string
+            const completedDateTime = row.getCell(5).value as string;
+            const amount = row.getCell(6).value;
+
+            const item: InvoiceItem = InvoiceItem.parseFromRecordToInvoice({
+                id: row.getCell(2).value,
+                customer: row.getCell(3).value,
+                crn: row.getCell(1).value,
+                appointmentDateTime: moment(appointmentDateTime, "DD-MM-YYYY HH:mm").toDate(),
+                completedDateTime: moment(completedDateTime, "DD-MM-YYYY").toDate(),
+                assessmentType: row.getCell(8).value,
+                amount: parseFloat(amount as string),
+            });
+            
+            
+            items.push(item);
+            invoice.period = row.getCell(7).value as string;
+        });
+        invoice.assessments = new InvoiceItemGroup("Assessments", items.length, _.sumBy(items, 'amount'), items);
+        invoice.total = _.sumBy(items, 'amount');
+
+        invoices.push(invoice);
+
+        await ExcelManager.createOrUpdateFromtemplate(invoices);
+        await DocManager.createDoc(invoice);
+    }
 }

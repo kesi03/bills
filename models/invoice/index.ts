@@ -62,6 +62,17 @@ export class InvoiceItem implements IInvoiceItem {
     this.amount = amount;
   }
 
+  public static parseFromRecordToInvoice(record:Record<string, any>) {
+    const recordId: string = record['id'] ?? '';
+    const recordCustomer: string = record['customer'] ?? '';
+    const recordCrn: string = record['crn'] ?? '';
+    const recordAppDate: Date = record['appointmentDateTime'] ? new Date(record['appointmentDateTime']) : new Date();
+    const recordCompletedDate: Date = record['completedDateTime'] ? new Date(record['completedDateTime']) : new Date();
+    const amount: number = record['amount'] ?? 0;
+    const assessmentType: AssessmentType = record['assessmentType'] ?? AssessmentType.ASSESSMENT;
+    return new InvoiceItem(recordId, recordCustomer, recordCrn, recordAppDate,recordCompletedDate, assessmentType, amount);
+  }
+
   public static parseFromAssementToInvoice(record: Partial<AssessmentRecord>,completedDate:Date) {
     const recordId: string = record.id ?? '';
     const recordCustomer: string = record.customer ?? '';

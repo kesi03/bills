@@ -7,8 +7,8 @@ function handleFormSubmit(event) {
   console.log('Form submitted:', jsonData);
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  const triggerTabList = document.querySelectorAll('#pills-tab a');
+function tabs(){
+const triggerTabList = document.querySelectorAll('#pills-tab a');
   const tabPanes = document.querySelectorAll('.tab-pane');
 
   triggerTabList.forEach(triggerEl => {
@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
       tabTrigger.show();
     });
   });
-});
+} 
 
 function nextStep(step) {
   document.querySelectorAll('.step').forEach(div => div.classList.add('d-none'));
@@ -367,10 +367,12 @@ function fetchXLSXFile() {
 const sheetDataMap = new Map();
 
 function displayAllSheets(workbook) {
-  const tabNav = document.getElementById('sheet-tab-nav');
+  // const tabNavTop = document.getElementById('sheet-tab-nav-top');
+  const tabNavBottom = document.getElementById('sheet-tab-nav-bottom');
   const tabContent = document.getElementById('sheet-tab-content');
 
-  tabNav.innerHTML = '';
+  // tabNavTop.innerHTML = '';
+  tabNavBottom.innerHTML = '';
   tabContent.innerHTML = '';
 
   workbook.SheetNames.forEach((sheetName, index) => {
@@ -382,10 +384,18 @@ function displayAllSheets(workbook) {
     // ✅ Store in map
     sheetDataMap.set(sheetName, jsonData);
 
-    // Tab button
-    tabNav.innerHTML += `
+    // //Tab button
+    // tabNavTop.innerHTML += `
+    //   <li class="nav-item" role="presentation">
+    //     <button class="nav-link ${activeClass}" id="${sheetId}-tab" data-bs-toggle="tab" data-bs-target="#${sheetId}" type="button" role="tab">
+    //       ${sheetName}
+    //     </button>
+    //   </li>
+    // `;
+
+    tabNavBottom.innerHTML += `
       <li class="nav-item" role="presentation">
-        <button class="nav-link ${activeClass}" id="${sheetId}-tab" data-bs-toggle="tab" data-bs-target="#${sheetId}" type="button" role="tab">
+        <button class="nav-link ${activeClass}" id="${sheetId}-tab-bottom" data-bs-toggle="tab" data-bs-target="#${sheetId}" type="button" role="tab">
           ${sheetName}
         </button>
       </li>
@@ -394,7 +404,7 @@ function displayAllSheets(workbook) {
     // Tab content
     tabContent.innerHTML += `
       <div class="tab-pane fade show ${activeClass}" id="${sheetId}" role="tabpanel">
-        ${generateTableHTML(jsonData)}
+        ${generateTableHTML(jsonData, sheetId)}
       </div>
     `;
   });
@@ -405,7 +415,23 @@ function displayAllSheets(workbook) {
   }, 0);
 }
 
-function generateTableHTML(data) {
+function toggleButton(sheetId,key,val){
+  if(val === 'yes'){
+    return `<button id="exclude-${sheetId}-${key}" data-status="${val}" type="button" class="btn btn-light" onClick="exclude('${sheetId}','${key}')">Include</button>`;
+  } else {
+    return `<button id="exclude-${sheetId}-${key}" data-status="${val}" type="button" class="btn btn-dark" onClick="exclude('${sheetId}','${key}')">Exclude</button>`;
+  }
+}
+
+function toggleRowClass(val) {
+   if(val === 'yes'){
+    return `table-dark`;
+  } else {
+    return ``;
+  }
+}
+
+function generateTableHTML(data,sheetId) {
   if (!data || data.length === 0) return '<p>No data available</p>';
 
   let html = '<table class="table table-striped table-hover sortable"><thead><tr>';
@@ -415,12 +441,15 @@ function generateTableHTML(data) {
   html += '</tr></thead><tbody>';
 
   for (let i = 1; i < data.length; i++) {
-    html += '<tr>';
     const row = data[i];
+    html += `<tr data-key="${sheetId}-${row[0]}" data-crn="${row[0]}" data-ref="${row[9]}" class="${toggleRowClass(row[row.length -1])}">`;
 
     for (let j = 0; j < row.length; j++) {
       const cell = row[j] || '';
       if (j === row.length - 1) {
+        html += `<td>${toggleButton(sheetId,row[0], cell)}</td>`;
+      }
+      else if (j === row.length - 2) {
         html += `<td><a href="javascript:void(0);" onClick="openInvoice('${cell}')">${cell}</a></td>`;
       } else {
         html += `<td>${cell}</td>`;
@@ -585,9 +614,42 @@ async function openInvoice(invoiceId) {
   await fetchInvoiceXLSXFile(invoiceId);
 }
 
+function exclude(sheetId,key) {
+  console.log('Excluding key:', key);
+  const row = document.querySelector(`[data-key="${sheetId}-${key}"]`);
+  if (!row) {
+    console.error('Row not found for key:', `${sheetId}-${key}`);
+    return;
+  } 
+  const refValue = row?.dataset.ref;
+  const button = document.getElementById(`exclude-${sheetId}-${key}`);
+  const currentStatus = button.getAttribute('data-status'); 
+  const newStatus = currentStatus === 'no' ? 'yes' : 'no';
+  button.setAttribute('data-status', newStatus);
+  button.innerHTML = newStatus === 'no' ? 'Exclude' : 'Include';
+  button.className = newStatus === 'no' ? 'btn btn-dark' : 'btn btn-light';
+  row.className = toggleRowClass(newStatus);
+
+  console.log(JSON.stringify({ id:key,ref:refValue,key:'Excluded', value: newStatus }))
+
+  fetch('/api/invoice/update', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id:key,ref:refValue,key:'Excluded', value: newStatus })
+  })
+  .then(response => response.text())
+  .then(result => {
+    console.log('Exclude result:', result);
+  })
+  .catch(error => {
+    console.error('Error excluding invoice:', error);
+  });
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
   await loadConfig();
   fetchXLSXFile();
   getFiles();
+  tabs();
 });
 
