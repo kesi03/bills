@@ -440,6 +440,12 @@ function generateTableHTML(data, sheetId) {
       if (j === row.length - 1) {
         html += `<td>${toggleButton(sheetId, row[0], cell)}</td>`;
       }
+      else if(j === 5 && typeof cell === 'number') {
+        html += `<td>${new Intl.NumberFormat('en-GB', {
+          style: 'currency',
+          currency: 'GBP'
+        }).format(cell)}</td>`;
+      } 
       else {
         html += `<td>${cell}</td>`;
       }
@@ -455,7 +461,7 @@ function generateTableHTML(data, sheetId) {
   }).format(total)}</td></tr>`;
 
   
-  html += `<tr><td colspan="${data[0].length - 1}" class="text-end fw-bold"></td><td class="fw-bold"><div id="pagination-table-${sheetId}" class="btn-group" role="group" aria-label="pagination"></div></td></tr>`;
+  html += `<tr><td colspan="2"><div class="input-group input-group-sm"><span class="input-group-text">Search</span><input class="form-control" id="table-${sheetId}-searchInput"/></div></td><td colspan="${data[0].length - 3}" class="text-end fw-bold"></td><td class="fw-bold"><div id="pagination-table-${sheetId}" class="btn-group" role="group" aria-label="pagination"></div></td></tr>`;
 
   html += '</tfoot></table>';
   return html;
@@ -712,6 +718,26 @@ document.addEventListener('DOMContentLoaded', async () => {
       document.getElementById(table.id).addEventListener('afterSort', () => {
         paginateTable(table.id, 10); 
       });
+
+      document.getElementById(`${table.id}-searchInput`).addEventListener('input', function () {
+        const query = this.value.trim().toLowerCase();
+        const rows = document.querySelectorAll(`#${table.id} tbody tr`);
+        if(query.length===0){
+            paginateTable(table.id, 10); 
+        } else{
+          rows.forEach(row => {
+          const rowText = Array.from(row.cells)
+            .map(cell => cell.textContent.toLowerCase())
+            .join(' ');
+
+          row.style.display = rowText.includes(query) ? '' : 'none';
+        });
+        }
+        
+        
+      });
+
+
     }); 
 
   }, 500);
