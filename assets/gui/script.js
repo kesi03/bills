@@ -691,6 +691,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   getFiles();
   tabs();
   setTimeout(() => {
+    
+
+
     const isInteractive = ['button', 'a', 'input', 'select', 'textarea'];
 
     document.querySelectorAll('.excel-table tbody tr').forEach(row => {
@@ -706,6 +709,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     document.querySelectorAll('.excel-table').forEach(table => {
       paginateTable(table.id, 10);
+      document.getElementById(table.id).addEventListener('afterSort', () => {
+        paginateTable(table.id, 10); 
+      });
     }); 
 
   }, 500);
