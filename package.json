@@ -1,6 +1,6 @@
 {
   "name": "bills",
-  "version": "1.0.20",
+  "version": "1.0.21",
   "description": "create, manage and copy invoices from CSV data",
   "repository": {
     "type": "git",
@@ -9,7 +9,7 @@
   "homepage": "https://github.com/kesi03/bills#readme",
   "main": "dist/bin/index.js",
   "bin": {
-    "bills": "dist/bin/index.js | pino-pretty"
+    "bills": "dist/bin/index.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
