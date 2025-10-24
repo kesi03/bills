@@ -1,5 +1,6 @@
 import { spawn, execSync } from 'child_process';
 import latestVersion from 'latest-version';
+import logger from '../logs';
 
 function runCommand(command: string, args: string[], cwd: string): Promise<void> {
   return new Promise((resolve, reject) => {
@@ -21,9 +22,9 @@ function runCommand(command: string, args: string[], cwd: string): Promise<void>
 
 function getGlobalPackageInfo(pkgName: string): { version: string; path: string } {
   const output = execSync(`pnpm list -g --json`, { encoding: 'utf8' });
-  //console.log('Raw pnpm list output:', output);
+  //logger.info('Raw pnpm list output:', output);
   const parsed = JSON.parse(output);
-  //console.log('Parsed global package info:', parsed);
+  //logger.info('Parsed global package info:', parsed);
 
   const root = parsed[0];
   const dep = root?.dependencies?.[pkgName];
@@ -42,21 +43,21 @@ export async function upgrade(): Promise<void> {
   const pkgName = '@mockholm/bills';
   const { version: currentVersion, path: installPath } = getGlobalPackageInfo(pkgName);
 
-  console.log(`🔍 Checking latest version of ${pkgName}...`);
+  logger.info(`🔍 Checking latest version of ${pkgName}...`);
 
-  console.log(`📂 Currently installed at ${installPath}`);
+  logger.info(`📂 Currently installed at ${installPath}`);
 
   const latest = await latestVersion(pkgName);
 
   if (latest === currentVersion) {
-    console.log(`✅ Already at latest version (${latest})`);
+    logger.info(`✅ Already at latest version (${latest})`);
     return;
   }
 
-  console.log(`⬆️  Upgrading ${pkgName} from ${currentVersion} → ${latest}`);
-  console.log(`📦 Installing updated version with pnpm...`);
+  logger.info(`⬆️  Upgrading ${pkgName} from ${currentVersion} → ${latest}`);
+  logger.info(`📦 Installing updated version with pnpm...`);
 
   await runCommand('pnpm', ['install', '-g', `${pkgName}@${latest}`], process.cwd());
 
-  console.log(`🎉 Upgrade complete! Now at version ${latest}`);
+  logger.info(`🎉 Upgrade complete! Now at version ${latest}`);
 }

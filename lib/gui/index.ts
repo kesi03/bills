@@ -6,6 +6,7 @@ import open from 'open';
 import { HolidayService } from '../holiday';
 import Calculator from '../calculation';
 import moment from 'moment';
+import logger from '../logs';
 
 /**
  * Reads a directory and returns files modified after a given date.
@@ -113,7 +114,7 @@ function ensureDirExists(dir: string = 'uploads') {
   try {
     if (!fs.existsSync(dirPath)) {
       fs.mkdirSync(dirPath, { recursive: true });
-      console.log(`Directory created successfully: ${dirPath}`);
+      logger.info(`Directory created successfully: ${dirPath}`);
     }
   } catch (error) {
     console.error(`Error creating directory ${dirPath}:`, error);
@@ -137,16 +138,23 @@ export default function launchGui() {
 
   const dataPath = path.join(process.cwd(), 'data');
 
-  console.log(`Starting Bills GUI in ${isGlobal ? 'global' : 'local'} mode on port ${port}...`);
+  logger.info(`Starting Bills GUI in ${isGlobal ? 'global' : 'local'} mode on port ${port}...`);
 
 
   app.use(express.json()); // Parses JSON
   app.use(express.urlencoded({ extended: true }));
 
+  app.use((req, res, next) => {
+  logger.info({ method: req.method, url: req.url }, 'Incoming request');
+  next();
+});
+
+
+
 
   app.get('/api/data/config', (req, res) => {
     const configPath = path.join(dataPath, 'config.json');
-    console.log('Reading config from:', configPath);
+    logger.info(`Reading config from: ${configPath}`);
     fs.readFile(configPath, 'utf8', (err, data) => {
       if (err) {
         console.error('Error reading config.json:', err);
@@ -211,8 +219,8 @@ export default function launchGui() {
         return res.status(500).json({ error: 'Failed to save configuration' });
       }
 
-      console.log('Configuration saved to config.json');
-      console.log(jsonData);
+      logger.info('Configuration saved to config.json');
+      logger.info(jsonData);
       res.json({ message: 'Configuration saved successfully', data: jsonData });
     });
   });
@@ -261,7 +269,7 @@ export default function launchGui() {
         return res.status(500).json({ error: 'Failed to save CSV' });
       }
 
-      console.log(`Saved to ${csvPath}`, tsvRows.join('\n'));
+      logger.info(`Saved to ${csvPath} ${tsvRows.join('\n')}`);
 
 
       Calculator.startInvoice(csvPath, configPath);
@@ -331,7 +339,7 @@ export default function launchGui() {
       return res.status(400).json({ error: 'Invalid or empty JSON object' });
     } 
 
-    console.log(jsonData);
+    logger.info(jsonData);
     // Load config
     fs.readFile(configPath, 'utf8', async (err, data) => {
       if (err) {
@@ -355,7 +363,7 @@ export default function launchGui() {
 
 
   app.listen(port, () => {
-    console.log(`Bills GUI is running at http://localhost:${port}`);
+    logger.info(`Bills GUI is running at http://localhost:${port}`);
     openBrowser(`http://localhost:${port}`);
   });
 

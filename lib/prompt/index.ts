@@ -1,5 +1,6 @@
 import fs from 'fs';
 import inquirer from 'inquirer';
+import logger from '../logs';
 
 
 export function hasEmptyValues(obj: Record<string, any>): boolean {
@@ -28,17 +29,17 @@ export async function promptWithRetry<T>(configPath: string, questions: any[], k
                 config['Cancelled'] = true
             }
             fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
-            console.log(`✅ Saved ${key} to config.json`);
+            logger.info(`✅ Saved ${key} to config.json`);
             break;
         } catch (err:any) {
             if(err.name==='ExitPromptError'){
-                console.log('\n❌ Cancelled by user.');
+                logger.info('\n❌ Cancelled by user.');
                 process.exit(0);
             }
             else{
                 console.error(`❌ Error in ${key}:`, err);
-                console.log(JSON.stringify(err,null,2))
-                console.log('🔁 Let’s try again...');
+                logger.info(JSON.stringify(err,null,2))
+                logger.info('🔁 Let’s try again...');
             }
         }
     }

@@ -11,6 +11,7 @@ import ExcelManager from '../export/excel';
 import moment from 'moment';
 import { HolidayService } from '../holiday';
 import { Payload } from '../../models/payload';
+import logger from '../logs';
 
 export default class Calculator {
     public static async startInvoice(dataPath: string, configPath: string, range?: number[]) {
@@ -42,7 +43,7 @@ export default class Calculator {
 
             const groupedByRef = new Map<string, InvoiceItem[]>();
 
-            console.log(config)
+            logger.info(config)
 
 
 
@@ -62,14 +63,14 @@ export default class Calculator {
                     const record: AssessmentRecord = new AssessmentRecord(value);
                     record.assessorAssessmentType = config.getAssessmentTypeByType(record.assessmentType, record.cancelled);
                     const key = config.getAssessmentStringByType(record.assessmentType, record.cancelled);
-                    console.log(key);
+                    logger.info(key);
                     record.assessorAmount = config.getCostByType(key) ?? 0;
 
                     record.assessorMonth = record.appointmentDateTime.getMonth() + 1;
                     const initials: string = getInitials(record.assessor)
 
                     const ref = formatCustomCode(record.appointmentDateTime);
-                    console.log(ref)
+                    logger.info(ref)
                     if (!groupedByRef.has(ref)) {
                         groupedByRef.set(ref, []);
                     }
@@ -82,7 +83,7 @@ export default class Calculator {
                     return record;
                 })
 
-            // console.log(groupedByRef);
+            // logger.info(groupedByRef);
             Calculator.createInvoice(groupedByRef, config);
         } catch (err) {
             console.error('Error starting invoice:', err);
@@ -101,7 +102,7 @@ export default class Calculator {
                     if (results.length > 0) {
                         resolve(results)
                     } else {
-                        console.log('No matching results found.');
+                        logger.info('No matching results found.');
                     }
                 });
         })
@@ -125,7 +126,7 @@ export default class Calculator {
         let counter: number = 0;
         const invoices: Invoice[] = [];
         function parseCodeToDate(code: string): string {
-            console.log(`code: ${code}`)
+            logger.info(`code: ${code}`)
             const match = code.match(/^[A-Z0-9]+-([A-Za-z]{3,4})(\d{2})$/);
             if (!match) throw new Error('Invalid code format');
 
@@ -156,7 +157,7 @@ export default class Calculator {
             invoice.bank = config.bank;
             invoice.date = currentDate.toISOString();
             invoice.ref = ref;
-            console.log(ref)
+            logger.info(ref)
             invoice.period = parseCodeToDate(ref) ;
             invoice.assessments = items.filter((item: InvoiceItem) => {
                 return item.assessmentType == AssessmentType.ASSESSMENT
@@ -179,7 +180,7 @@ export default class Calculator {
             invoice.total = items.reduce((sum, item) => sum + item.amount, 0);
             counter++;
             invoice.invoiceNumber = counter;
-            //console.log(invoice)
+            //logger.info(invoice)
             DocManager.createDoc(invoice);
             invoices.push(invoice);
         }

@@ -1,0 +1,63 @@
+{"level":30,"time":1761321771903,"pid":123318,"hostname":"Dellinquent","msg":"Starting Bills GUI in local mode on port 3010..."}
+{"level":30,"time":1761321771912,"pid":123318,"hostname":"Dellinquent","msg":"Bills GUI is running at http://localhost:3010"}
+{"level":30,"time":1761321772768,"pid":123318,"hostname":"Dellinquent","method":"GET","url":"/","msg":"Incoming request"}
+{"level":30,"time":1761321772819,"pid":123318,"hostname":"Dellinquent","method":"GET","url":"/bootstrap/css/bootstrap.min.css","msg":"Incoming request"}
+{"level":30,"time":1761321772823,"pid":123318,"hostname":"Dellinquent","method":"GET","url":"/bootstrap-icons/bootstrap-icons.css","msg":"Incoming request"}
+{"level":30,"time":1761321772828,"pid":123318,"hostname":"Dellinquent","method":"GET","url":"/style.css","msg":"Incoming request"}
+{"level":30,"time":1761321772828,"pid":123318,"hostname":"Dellinquent","method":"GET","url":"/vendors/xlsx.full.min.js","msg":"Incoming request"}
+{"level":30,"time":1761321772832,"pid":123318,"hostname":"Dellinquent","method":"GET","url":"/vendors/tablesort.min.js","msg":"Incoming request"}
+{"level":30,"time":1761321772833,"pid":123318,"hostname":"Dellinquent","method":"GET","url":"/bootstrap/js/bootstrap.bundle.min.js","msg":"Incoming request"}
+{"level":30,"time":1761321772838,"pid":123318,"hostname":"Dellinquent","method":"GET","url":"/script.js","msg":"Incoming request"}
+{"level":30,"time":1761321772964,"pid":123318,"hostname":"Dellinquent","method":"GET","url":"/bootstrap-icons/fonts/bootstrap-icons.woff2?e34853135f9e39acf64315236852cd5a","msg":"Incoming request"}
+{"level":30,"time":1761321772967,"pid":123318,"hostname":"Dellinquent","method":"GET","url":"/api/data/config","msg":"Incoming request"}
+{"level":30,"time":1761321772968,"pid":123318,"hostname":"Dellinquent","msg":"Reading config from: /home/kesi03/projects/bills/data/config.json"}
+{"level":30,"time":1761321772985,"pid":123318,"hostname":"Dellinquent","method":"GET","url":"/data/invoices.xlsx","msg":"Incoming request"}
+{"level":30,"time":1761321772989,"pid":123318,"hostname":"Dellinquent","method":"GET","url":"/api/files","msg":"Incoming request"}
+{"level":30,"time":1761321782871,"pid":123318,"hostname":"Dellinquent","method":"POST","url":"/api/invoice/update","msg":"Incoming request"}
+{"level":30,"time":1761321782872,"pid":123318,"hostname":"Dellinquent","id":"74731213176","ref":"A2L-Oct25","key":"Excluded","value":"yes"}
+{"level":30,"time":1761321783112,"pid":123318,"hostname":"Dellinquent","msg":"Invoice generated successfully!"}
+{"level":30,"time":1761321951899,"pid":124109,"hostname":"Dellinquent","msg":"Starting Bills GUI in local mode on port 3010..."}
+{"level":30,"time":1761321951904,"pid":124109,"hostname":"Dellinquent","msg":"Bills GUI is running at http://localhost:3010"}
+{"level":30,"time":1761321952666,"pid":124109,"hostname":"Dellinquent","method":"GET","url":"/","msg":"Incoming request"}
+{"level":30,"time":1761321952719,"pid":124109,"hostname":"Dellinquent","method":"GET","url":"/bootstrap/css/bootstrap.min.css","msg":"Incoming request"}
+{"level":30,"time":1761321952726,"pid":124109,"hostname":"Dellinquent","method":"GET","url":"/bootstrap-icons/bootstrap-icons.css","msg":"Incoming request"}
+{"level":30,"time":1761321952726,"pid":124109,"hostname":"Dellinquent","method":"GET","url":"/style.css","msg":"Incoming request"}
+{"level":30,"time":1761321952730,"pid":124109,"hostname":"Dellinquent","method":"GET","url":"/vendors/xlsx.full.min.js","msg":"Incoming request"}
+{"level":30,"time":1761321952731,"pid":124109,"hostname":"Dellinquent","method":"GET","url":"/vendors/tablesort.min.js","msg":"Incoming request"}
+{"level":30,"time":1761321952735,"pid":124109,"hostname":"Dellinquent","method":"GET","url":"/bootstrap/js/bootstrap.bundle.min.js","msg":"Incoming request"}
+{"level":30,"time":1761321952737,"pid":124109,"hostname":"Dellinquent","method":"GET","url":"/script.js","msg":"Incoming request"}
+{"level":30,"time":1761321952871,"pid":124109,"hostname":"Dellinquent","method":"GET","url":"/bootstrap-icons/fonts/bootstrap-icons.woff2?e34853135f9e39acf64315236852cd5a","msg":"Incoming request"}
+{"level":30,"time":1761321952871,"pid":124109,"hostname":"Dellinquent","method":"GET","url":"/api/data/config","msg":"Incoming request"}
+{"level":30,"time":1761321952872,"pid":124109,"hostname":"Dellinquent","msg":"Reading config from: /home/kesi03/projects/bills/data/config.json"}
+{"level":30,"time":1761321952898,"pid":124109,"hostname":"Dellinquent","method":"GET","url":"/data/invoices.xlsx","msg":"Incoming request"}
+{"level":30,"time":1761321952899,"pid":124109,"hostname":"Dellinquent","method":"GET","url":"/api/files","msg":"Incoming request"}
+{"level":30,"time":1761322069930,"pid":124642,"hostname":"Dellinquent","msg":"Starting Bills GUI in local mode on port 3010..."}
+{"level":30,"time":1761322069938,"pid":124642,"hostname":"Dellinquent","msg":"Bills GUI is running at http://localhost:3010"}
+{"level":30,"time":1761322070811,"pid":124642,"hostname":"Dellinquent","method":"GET","url":"/","msg":"Incoming request"}
+{"level":30,"time":1761322070860,"pid":124642,"hostname":"Dellinquent","method":"GET","url":"/bootstrap/css/bootstrap.min.css","msg":"Incoming request"}
+{"level":30,"time":1761322070861,"pid":124642,"hostname":"Dellinquent","method":"GET","url":"/bootstrap-icons/bootstrap-icons.css","msg":"Incoming request"}
+{"level":30,"time":1761322070866,"pid":124642,"hostname":"Dellinquent","method":"GET","url":"/style.css","msg":"Incoming request"}
+{"level":30,"time":1761322070867,"pid":124642,"hostname":"Dellinquent","method":"GET","url":"/vendors/xlsx.full.min.js","msg":"Incoming request"}
+{"level":30,"time":1761322070872,"pid":124642,"hostname":"Dellinquent","method":"GET","url":"/vendors/tablesort.min.js","msg":"Incoming request"}
+{"level":30,"time":1761322070872,"pid":124642,"hostname":"Dellinquent","method":"GET","url":"/bootstrap/js/bootstrap.bundle.min.js","msg":"Incoming request"}
+{"level":30,"time":1761322070876,"pid":124642,"hostname":"Dellinquent","method":"GET","url":"/script.js","msg":"Incoming request"}
+{"level":30,"time":1761322070990,"pid":124642,"hostname":"Dellinquent","method":"GET","url":"/bootstrap-icons/fonts/bootstrap-icons.woff2?e34853135f9e39acf64315236852cd5a","msg":"Incoming request"}
+{"level":30,"time":1761322070991,"pid":124642,"hostname":"Dellinquent","method":"GET","url":"/api/data/config","msg":"Incoming request"}
+{"level":30,"time":1761322070992,"pid":124642,"hostname":"Dellinquent","msg":"Reading config from: /home/kesi03/projects/bills/data/config.json"}
+{"level":30,"time":1761322071009,"pid":124642,"hostname":"Dellinquent","method":"GET","url":"/api/files","msg":"Incoming request"}
+{"level":30,"time":1761322071010,"pid":124642,"hostname":"Dellinquent","method":"GET","url":"/data/invoices.xlsx","msg":"Incoming request"}
+{"level":30,"time":1761322261356,"pid":125801,"hostname":"Dellinquent","msg":"Starting Bills GUI in local mode on port 3010..."}
+{"level":30,"time":1761322261362,"pid":125801,"hostname":"Dellinquent","msg":"Bills GUI is running at http://localhost:3010"}
+{"level":30,"time":1761322262221,"pid":125801,"hostname":"Dellinquent","method":"GET","url":"/","msg":"Incoming request"}
+{"level":30,"time":1761322262283,"pid":125801,"hostname":"Dellinquent","method":"GET","url":"/bootstrap/css/bootstrap.min.css","msg":"Incoming request"}
+{"level":30,"time":1761322262284,"pid":125801,"hostname":"Dellinquent","method":"GET","url":"/bootstrap-icons/bootstrap-icons.css","msg":"Incoming request"}
+{"level":30,"time":1761322262289,"pid":125801,"hostname":"Dellinquent","method":"GET","url":"/style.css","msg":"Incoming request"}
+{"level":30,"time":1761322262290,"pid":125801,"hostname":"Dellinquent","method":"GET","url":"/vendors/xlsx.full.min.js","msg":"Incoming request"}
+{"level":30,"time":1761322262295,"pid":125801,"hostname":"Dellinquent","method":"GET","url":"/bootstrap/js/bootstrap.bundle.min.js","msg":"Incoming request"}
+{"level":30,"time":1761322262296,"pid":125801,"hostname":"Dellinquent","method":"GET","url":"/vendors/tablesort.min.js","msg":"Incoming request"}
+{"level":30,"time":1761322262300,"pid":125801,"hostname":"Dellinquent","method":"GET","url":"/script.js","msg":"Incoming request"}
+{"level":30,"time":1761322262408,"pid":125801,"hostname":"Dellinquent","method":"GET","url":"/bootstrap-icons/fonts/bootstrap-icons.woff2?e34853135f9e39acf64315236852cd5a","msg":"Incoming request"}
+{"level":30,"time":1761322262410,"pid":125801,"hostname":"Dellinquent","method":"GET","url":"/api/data/config","msg":"Incoming request"}
+{"level":30,"time":1761322262411,"pid":125801,"hostname":"Dellinquent","msg":"Reading config from: /home/kesi03/projects/bills/data/config.json"}
+{"level":30,"time":1761322262430,"pid":125801,"hostname":"Dellinquent","method":"GET","url":"/data/invoices.xlsx","msg":"Incoming request"}
+{"level":30,"time":1761322262435,"pid":125801,"hostname":"Dellinquent","method":"GET","url":"/api/files","msg":"Incoming request"}

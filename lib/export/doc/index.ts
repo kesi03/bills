@@ -17,6 +17,7 @@ import _ from "lodash"
 import { Invoice, InvoiceItemGroup } from '../../../models/invoice';
 import moment from 'moment';
 import { createFooter } from './footer';
+import logger from '../../logs';
 
 
 export default class DocManager {
@@ -379,7 +380,7 @@ export default class DocManager {
         // Save the document
         Packer.toBuffer(doc).then((buffer) => {
             fs.writeFileSync(`data/${ref}-invoice.docx`, buffer);
-            console.log('Invoice generated successfully!');
+            logger.info('Invoice generated successfully!');
         });
     }
 }
