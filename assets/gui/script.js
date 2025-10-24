@@ -1,5 +1,6 @@
 
 
+
 function handleFormSubmit(event) {
   event.preventDefault();
   const formData = new FormData(event.target);
@@ -7,8 +8,8 @@ function handleFormSubmit(event) {
   console.log('Form submitted:', jsonData);
 }
 
-function tabs(){
-const triggerTabList = document.querySelectorAll('#pills-tab a');
+function tabs() {
+  const triggerTabList = document.querySelectorAll('#pills-tab a');
   const tabPanes = document.querySelectorAll('.tab-pane');
 
   triggerTabList.forEach(triggerEl => {
@@ -43,7 +44,7 @@ const triggerTabList = document.querySelectorAll('#pills-tab a');
       tabTrigger.show();
     });
   });
-} 
+}
 
 function nextStep(step) {
   document.querySelectorAll('.step').forEach(div => div.classList.add('d-none'));
@@ -367,11 +368,9 @@ function fetchXLSXFile() {
 const sheetDataMap = new Map();
 
 function displayAllSheets(workbook) {
-  // const tabNavTop = document.getElementById('sheet-tab-nav-top');
   const tabNavBottom = document.getElementById('sheet-tab-nav-bottom');
   const tabContent = document.getElementById('sheet-tab-content');
 
-  // tabNavTop.innerHTML = '';
   tabNavBottom.innerHTML = '';
   tabContent.innerHTML = '';
 
@@ -383,15 +382,6 @@ function displayAllSheets(workbook) {
 
     // ✅ Store in map
     sheetDataMap.set(sheetName, jsonData);
-
-    // //Tab button
-    // tabNavTop.innerHTML += `
-    //   <li class="nav-item" role="presentation">
-    //     <button class="nav-link ${activeClass}" id="${sheetId}-tab" data-bs-toggle="tab" data-bs-target="#${sheetId}" type="button" role="tab">
-    //       ${sheetName}
-    //     </button>
-    //   </li>
-    // `;
 
     tabNavBottom.innerHTML += `
       <li class="nav-item" role="presentation">
@@ -415,8 +405,8 @@ function displayAllSheets(workbook) {
   }, 0);
 }
 
-function toggleButton(sheetId,key,val){
-  if(val === 'yes'){
+function toggleButton(sheetId, key, val) {
+  if (val === 'yes') {
     return `<button id="exclude-${sheetId}-${key}" data-status="${val}" type="button" class="btn btn-light" onClick="exclude('${sheetId}','${key}')">Include</button>`;
   } else {
     return `<button id="exclude-${sheetId}-${key}" data-status="${val}" type="button" class="btn btn-dark" onClick="exclude('${sheetId}','${key}')">Exclude</button>`;
@@ -424,17 +414,18 @@ function toggleButton(sheetId,key,val){
 }
 
 function toggleRowClass(val) {
-   if(val === 'yes'){
+  if (val === 'yes') {
     return `table-dark`;
   } else {
     return ``;
   }
 }
 
-function generateTableHTML(data,sheetId) {
+function generateTableHTML(data, sheetId) {
+  let total = 0;  
   if (!data || data.length === 0) return '<p>No data available</p>';
 
-  let html = '<table class="table table-striped table-hover sortable"><thead><tr>';
+  let html = `<table id="table-${sheetId}" class="table table-striped table-hover sortable excel-table"><thead><tr>`;
   for (const header of data[0]) {
     html += `<th>${header}</th>`;
   }
@@ -442,26 +433,31 @@ function generateTableHTML(data,sheetId) {
 
   for (let i = 1; i < data.length; i++) {
     const row = data[i];
-    html += `<tr data-key="${sheetId}-${row[0]}" data-crn="${row[0]}" data-ref="${row[9]}" class="${toggleRowClass(row[row.length -1])}">`;
+    html += `<tr data-key="${sheetId}-${row[0]}" data-crn="${row[0]}" data-ref="${row[9]}" class="${toggleRowClass(row[row.length - 1])}">`;
 
     for (let j = 0; j < row.length; j++) {
       const cell = row[j] || '';
       if (j === row.length - 1) {
-        html += `<td>${toggleButton(sheetId,row[0], cell)}</td>`;
+        html += `<td>${toggleButton(sheetId, row[0], cell)}</td>`;
       }
-      else if (j === row.length - 2) {
-        html += `<td><a href="javascript:void(0);" onClick="openInvoice('${cell}')">${cell}</a></td>`;
-      } else {
+      else {
         html += `<td>${cell}</td>`;
       }
     }
-
+    total += typeof row[5] === 'number' ? row[5] : 0; // Assuming column G is index 6 
     html += '</tr>';
   }
+  html += '</tbody>';
 
+  html += `<tfoot><tr><td colspan="${data[0].length - 1}" class="text-end fw-bold">Total:</td><td class="fw-bold">${new Intl.NumberFormat('en-GB', {
+    style: 'currency',
+    currency: 'GBP'
+  }).format(total)}</td></tr>`;
 
+  
+  html += `<tr><td colspan="${data[0].length - 1}" class="text-end fw-bold"></td><td class="fw-bold"><div id="pagination-table-${sheetId}" class="btn-group" role="group" aria-label="pagination"></div></td></tr>`;
 
-  html += '</tbody></table>';
+  html += '</tfoot></table>';
   return html;
 }
 
@@ -485,9 +481,9 @@ function getCellsInRange(start, end) {
 
 
 function generateStyledTable(worksheet) {
-  console.log('Generating styled table from worksheet:', worksheet);
+  //console.log('Generating styled table from worksheet:', worksheet);
   const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-  console.log('Worksheet JSON data:', jsonData);
+  // console.log('Worksheet JSON data:', jsonData);
 
   if (jsonData.length === 0) return '<p>No data available</p>';
   // Get range from worksheet
@@ -514,7 +510,7 @@ function generateStyledTable(worksheet) {
 
 
       if (cell && cell.f) {
-        console.log(`Cell ${cellRef} has formula: ${cell.f}`);
+        // console.log(`Cell ${cellRef} has formula: ${cell.f}`);
         const formula = cell.f;
         const match = formula.match(/SUM\((G\d+):(G\d+)\)/);
 
@@ -535,7 +531,7 @@ function generateStyledTable(worksheet) {
             }
           }
           totalCellref = cellRef;
-          console.log(`Total for ${formula}:`, total);
+          // console.log(`Total for ${formula}:`, total);
         }
       }
 
@@ -545,15 +541,15 @@ function generateStyledTable(worksheet) {
       } else {
         if (cellRef === totalCellref) {
           td.textContent = new Intl.NumberFormat('en-GB', {
-  style: 'currency',
-  currency: 'GBP'
-}).format(total);
+            style: 'currency',
+            currency: 'GBP'
+          }).format(total);
         } else {
 
           td.textContent = (typeof value === 'number' ? new Intl.NumberFormat('en-GB', {
-  style: 'currency',
-  currency: 'GBP'
-}).format(value) : value);
+            style: 'currency',
+            currency: 'GBP'
+          }).format(value) : value);
         }
       }
 
@@ -577,11 +573,54 @@ function generateStyledTable(worksheet) {
       tr.appendChild(td);
     }
 
+
+
     table.appendChild(tr);
+
+    
   }
   const html = table.outerHTML;
 
   return html;
+}
+
+function paginateTable(tableId, rowsPerPage = 10) {
+  const table = document.getElementById(tableId);
+  const tbody = table.querySelector('tbody');
+  const rows = Array.from(tbody.querySelectorAll('tr'));
+  const pagination = document.getElementById('pagination' + '-' + tableId);
+  const totalPages = Math.ceil(rows.length / rowsPerPage);
+  let currentPage = 1;
+
+  function renderPage(page) {
+    // Hide all rows
+    rows.forEach(row => row.style.display = 'none');
+
+    // Show only rows for the current page
+    const start = (page - 1) * rowsPerPage;
+    const end = start + rowsPerPage;
+    rows.slice(start, end).forEach(row => row.style.display = '');
+
+    // Update pagination controls
+    pagination.innerHTML = '';
+
+    if (rows.length > rowsPerPage) {
+      for (let i = 1; i <= totalPages; i++) {
+        const btn = document.createElement('button');
+        btn.textContent = i;
+        btn.className = i === page ? 'btn btn-light btn-sm active' : 'btn btn-sm btn-light';
+        btn.addEventListener('click', () => renderPage(i));
+        pagination.appendChild(btn);
+      }
+    }
+
+    if (rows.length <= rowsPerPage) {
+  pagination.parentElement.parentElement.style.display = 'none';
+}
+
+  }
+
+  renderPage(currentPage);
 }
 
 function fetchInvoiceXLSXFile(invoiceId) {
@@ -610,46 +649,64 @@ function fetchInvoiceXLSXFile(invoiceId) {
 
 
 async function openInvoice(invoiceId) {
-  console.log('Opening invoice:', invoiceId);
   await fetchInvoiceXLSXFile(invoiceId);
 }
 
-function exclude(sheetId,key) {
-  console.log('Excluding key:', key);
+function exclude(sheetId, key) {
   const row = document.querySelector(`[data-key="${sheetId}-${key}"]`);
   if (!row) {
     console.error('Row not found for key:', `${sheetId}-${key}`);
     return;
-  } 
+  }
   const refValue = row?.dataset.ref;
   const button = document.getElementById(`exclude-${sheetId}-${key}`);
-  const currentStatus = button.getAttribute('data-status'); 
+  const currentStatus = button.getAttribute('data-status');
   const newStatus = currentStatus === 'no' ? 'yes' : 'no';
   button.setAttribute('data-status', newStatus);
   button.innerHTML = newStatus === 'no' ? 'Exclude' : 'Include';
   button.className = newStatus === 'no' ? 'btn btn-dark' : 'btn btn-light';
   row.className = toggleRowClass(newStatus);
 
-  console.log(JSON.stringify({ id:key,ref:refValue,key:'Excluded', value: newStatus }))
+  console.log(JSON.stringify({ id: key, ref: refValue, key: 'Excluded', value: newStatus }))
 
   fetch('/api/invoice/update', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ id:key,ref:refValue,key:'Excluded', value: newStatus })
+    body: JSON.stringify({ id: key, ref: refValue, key: 'Excluded', value: newStatus })
   })
-  .then(response => response.text())
-  .then(result => {
-    console.log('Exclude result:', result);
-  })
-  .catch(error => {
-    console.error('Error excluding invoice:', error);
-  });
+    .then(response => response.text())
+    .then(result => {
+      console.log('Exclude result:', result);
+    })
+    .catch(error => {
+      console.error('Error excluding invoice:', error);
+    });
 }
+
+
 
 document.addEventListener('DOMContentLoaded', async () => {
   await loadConfig();
   fetchXLSXFile();
   getFiles();
   tabs();
-});
+  setTimeout(() => {
+    const isInteractive = ['button', 'a', 'input', 'select', 'textarea'];
 
+    document.querySelectorAll('.excel-table tbody tr').forEach(row => {
+      row.ondblclick = event => {
+        const tag = event.target.tagName.toLowerCase();
+
+        if (!isInteractive.includes(tag)) {
+          const ref = row.dataset.ref;
+          openInvoice(ref);
+        }
+      };
+    });
+
+    document.querySelectorAll('.excel-table').forEach(table => {
+      paginateTable(table.id, 10);
+    }); 
+
+  }, 500);
+});

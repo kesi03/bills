@@ -35,15 +35,25 @@ th[role=columnheader]:not(.no-sort):hover:after {
 
 .card-header.excel-green,
   .card-footer.excel-green {
-    background-color: #e2f0d9; /* Light Excel-like green */
-    border-color: #c5e0b4;
+    background-color: #198754; /* Light Excel-like green */
+    border-color: #fff;
   }
 
   .nav-tabs .nav-link {
-    color: #217346;
+    color: #fff;
   }
 
   .nav-tabs .nav-link.active {
     background-color: #c5e0b4;
     color: #000;
+  }
+
+.excel-table th {
+	background-color: #c5e0b4; /* Light Excel-like green for headers */
+	color: #000;
+	border-bottom: 2px solid #000;
+  }
+
+  .card-header.excel-green h5{
+	color:#fff
   }
