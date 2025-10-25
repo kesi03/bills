@@ -145,7 +145,7 @@ export default function launchGui() {
   app.use(express.urlencoded({ extended: true }));
 
   app.use((req, res, next) => {
-  logger.info({ method: req.method, url: req.url }, 'Incoming request');
+  logger.debug(`method: ${req.method}, url: ${req.url}, Incoming request`);
   next();
 });
 

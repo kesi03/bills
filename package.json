@@ -1,6 +1,6 @@
 {
   "name": "bills",
-  "version": "1.0.21",
+  "version": "1.0.22",
   "description": "create, manage and copy invoices from CSV data",
   "repository": {
     "type": "git",
@@ -20,7 +20,7 @@
     "register": "tsx bin/index.ts register",
     "bump": "tsx bin/index.ts bump",
     "upgrade": "tsx bin/index.ts upgrade",
-    "bills": "tsx bin/index.ts | pino-pretty",
+    "bills": "tsx bin/index.ts",
     "compile": "tsc"
   },
   "files": [
@@ -41,11 +41,10 @@
     "@types/inquirer": "^9.0.9",
     "@types/lodash": "^4.17.20",
     "@types/node": "^24.7.0",
-    "@types/pino": "^7.0.5",
     "@types/semver": "^7.7.1",
+    "@types/winston": "^2.4.4",
     "@types/yargs": "^17.0.33",
     "npm-run-all": "^4.1.5",
-    "pino-pretty": "^13.1.2",
     "ts-node": "^10.9.2",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3"
@@ -68,8 +67,8 @@
     "moment": "^2.30.1",
     "multer": "^2.0.2",
     "open": "^10.2.0",
-    "pino": "^10.1.0",
     "semver": "^7.7.3",
+    "winston": "^3.18.3",
     "yargs": "^17.0.0"
   }
 }

@@ -48,10 +48,15 @@ th[role=columnheader]:not(.no-sort):hover:after {
     color: #000;
   }
 
-.excel-table th {
-	background-color: #c5e0b4; /* Light Excel-like green for headers */
+ .excel-table th {
+	background-color: #c5e0b4; 
 	color: #000;
 	border-bottom: 2px solid #000;
+	max-height: 10px;
+  } 
+
+  .excel-table thead{
+	max-height: 10px;
   }
 
   .card-header.excel-green h5{

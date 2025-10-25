@@ -407,9 +407,9 @@ function displayAllSheets(workbook) {
 
 function toggleButton(sheetId, key, val) {
   if (val === 'yes') {
-    return `<button id="exclude-${sheetId}-${key}" data-status="${val}" type="button" class="btn btn-light" onClick="exclude('${sheetId}','${key}')">Include</button>`;
+    return `<button id="exclude-${sheetId}-${key}" data-status="${val}" type="button" class="btn btn-light btn-sm" onClick="exclude('${sheetId}','${key}')"><i class="bi bi-check-circle-fill"></i></button>`;
   } else {
-    return `<button id="exclude-${sheetId}-${key}" data-status="${val}" type="button" class="btn btn-dark" onClick="exclude('${sheetId}','${key}')">Exclude</button>`;
+    return `<button id="exclude-${sheetId}-${key}" data-status="${val}" type="button" class="btn btn-dark btn-sm" onClick="exclude('${sheetId}','${key}')"><i class="bi bi-circle"></i></button>`;
   }
 }
 
@@ -425,7 +425,7 @@ function generateTableHTML(data, sheetId) {
   let total = 0;  
   if (!data || data.length === 0) return '<p>No data available</p>';
 
-  let html = `<table id="table-${sheetId}" class="table table-striped table-hover sortable excel-table"><thead><tr>`;
+  let html = `<table id="table-${sheetId}" class="table table-striped table-hover sortable excel-table table-sm table-light"><thead><tr>`;
   for (const header of data[0]) {
     html += `<th>${header}</th>`;
   }
@@ -669,8 +669,8 @@ function exclude(sheetId, key) {
   const currentStatus = button.getAttribute('data-status');
   const newStatus = currentStatus === 'no' ? 'yes' : 'no';
   button.setAttribute('data-status', newStatus);
-  button.innerHTML = newStatus === 'no' ? 'Exclude' : 'Include';
-  button.className = newStatus === 'no' ? 'btn btn-dark' : 'btn btn-light';
+  button.innerHTML = newStatus === 'no' ? '<i class="bi bi-circle"></i>' : '<i class="bi bi-check-circle-fill"></i>';
+  button.className = newStatus === 'no' ? 'btn btn-dark btn-sm' : 'btn btn-light btn-sm';
   row.className = toggleRowClass(newStatus);
 
   console.log(JSON.stringify({ id: key, ref: refValue, key: 'Excluded', value: newStatus }))

@@ -2,3 +2,4 @@ node_modules
 dist
 apps
 server.log
+app.log
