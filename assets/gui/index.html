@@ -191,7 +191,8 @@
                      <div id="logBox"></div>
 <script>
     const logBox = document.getElementById('logBox');
-    const socket = new WebSocket('ws://localhost:3010');
+    const port = window.location.port;
+    const socket = new WebSocket(`ws://localhost${port ? `:${port}` : ''}`);
 
     socket.addEventListener('message', (event) => {
       const log = JSON.parse(event.data);
