@@ -407,7 +407,7 @@ function displayAllSheets(workbook) {
 
 function toggleButton(sheetId, key, val) {
   if (val === 'yes') {
-    return `<button id="exclude-${sheetId}-${key}" data-status="${val}" type="button" class="btn btn-light btn-sm" onClick="exclude('${sheetId}','${key}')"><i class="bi bi-check-circle-fill"></i></button>`;
+    return `<button id="exclude-${sheetId}-${key}" data-status="${val}" type="button" class="btn btn-outline-success btn-sm" onClick="exclude('${sheetId}','${key}')"><i class="bi bi-check-circle-fill"></i></button>`;
   } else {
     return `<button id="exclude-${sheetId}-${key}" data-status="${val}" type="button" class="btn btn-dark btn-sm" onClick="exclude('${sheetId}','${key}')"><i class="bi bi-circle"></i></button>`;
   }
@@ -415,7 +415,7 @@ function toggleButton(sheetId, key, val) {
 
 function toggleRowClass(val) {
   if (val === 'yes') {
-    return `table-dark`;
+    return `table-success`;
   } else {
     return ``;
   }
@@ -425,7 +425,7 @@ function generateTableHTML(data, sheetId) {
   let total = 0;  
   if (!data || data.length === 0) return '<p>No data available</p>';
 
-  let html = `<table id="table-${sheetId}" class="table table-striped table-hover sortable excel-table table-sm table-light"><thead><tr>`;
+  let html = `<table id="table-${sheetId}" class="table table-striped table-hover sortable excel-table table-sm"><thead><tr>`;
   for (const header of data[0]) {
     html += `<th>${header}</th>`;
   }
@@ -438,7 +438,7 @@ function generateTableHTML(data, sheetId) {
     for (let j = 0; j < row.length; j++) {
       const cell = row[j] || '';
       if (j === row.length - 1) {
-        html += `<td>${toggleButton(sheetId, row[0], cell)}</td>`;
+        html += `<td style="max-width:30px;">${toggleButton(sheetId, row[0], cell)}</td>`;
       }
       else if(j === 5 && typeof cell === 'number') {
         html += `<td>${new Intl.NumberFormat('en-GB', {
@@ -446,6 +446,9 @@ function generateTableHTML(data, sheetId) {
           currency: 'GBP'
         }).format(cell)}</td>`;
       } 
+      else if(j === 3 ){
+        html+=`<td>${moment(cell, 'DD-MM-YYYY HH:mm').format('DD-MM-YYYY')}</td>`
+      }
       else {
         html += `<td>${cell}</td>`;
       }
@@ -742,3 +745,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   }, 500);
 });
+
+function isJsonString(str){
+  try {
+    const parsed = JSON.parse(str);
+    return typeof parsed === 'object' && parsed !== null;
+  } catch {
+    return false;
+  }
+}
+

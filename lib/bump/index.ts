@@ -2,7 +2,7 @@ import inquirer from 'inquirer';
 import fs from 'fs';
 import path from 'path';
 import semver from 'semver';
-import logger from '../logs';
+import logger from '../logger';
 
 
 export default async function bumpVersion() {
@@ -23,8 +23,10 @@ export default async function bumpVersion() {
     const newVersion = semver.inc(pkg.version, bump);
     pkg.version = newVersion;
     fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2));
+    console.log(`✅ Version bumped to ${newVersion}`);
     logger.info(`✅ Version bumped to ${newVersion}`);
   } else {
+    console.log('🛑 No version change.');
     logger.info('🛑 No version change.');
   }
 

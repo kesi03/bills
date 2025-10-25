@@ -8,7 +8,7 @@ import { Styles } from "../../../style/excel";
 import { Payload } from "../../../models/payload";
 import { Config } from "../../../models/config";
 import DocManager from "../doc";
-import logger from '../../logs';
+import logs from '../../logs';
 
 
 
@@ -154,9 +154,9 @@ export default class ExcelManager {
 
         if (fs.existsSync(filePath)) {
             await workbook.xlsx.readFile(filePath);
-            logger.info('Excel file exists. Updating rows...');
+            logs.info('Excel file exists. Updating rows...');
         } else {
-            logger.info('Creating new Excel file...');
+            logs.info('Creating new Excel file...');
         }
 
         invoices.forEach((invoice: Invoice) => {
@@ -165,7 +165,7 @@ export default class ExcelManager {
         })
 
         await workbook.xlsx.writeFile(filePath);
-        logger.info(`Excel file created: ${filePath}`);
+        logs.info(`Excel file created: ${filePath}`);
     }
 
 

@@ -6,7 +6,11 @@ import open from 'open';
 import { HolidayService } from '../holiday';
 import Calculator from '../calculation';
 import moment from 'moment';
-import logger from '../logs';
+import logs,{ wsClients } from '../logs';
+import WebSocket from 'ws';
+import http from 'http';
+
+
 
 /**
  * Reads a directory and returns files modified after a given date.
@@ -114,7 +118,7 @@ function ensureDirExists(dir: string = 'uploads') {
   try {
     if (!fs.existsSync(dirPath)) {
       fs.mkdirSync(dirPath, { recursive: true });
-      logger.info(`Directory created successfully: ${dirPath}`);
+      logs.info(`Directory created successfully: ${dirPath}`);
     }
   } catch (error) {
     console.error(`Error creating directory ${dirPath}:`, error);
@@ -136,25 +140,35 @@ export default function launchGui() {
   const isGlobal = !__dirname.startsWith(process.cwd());
   const port = isGlobal ? 3020 : 3010;
 
+  const server = http.createServer(app);
+  const wss = new WebSocket.Server({ server });
+
+
+
   const dataPath = path.join(process.cwd(), 'data');
 
-  logger.info(`Starting Bills GUI in ${isGlobal ? 'global' : 'local'} mode on port ${port}...`);
+  logs.info(`Starting Bills GUI in ${isGlobal ? 'global' : 'local'} mode on port ${port}...`);
 
 
   app.use(express.json()); // Parses JSON
   app.use(express.urlencoded({ extended: true }));
 
   app.use((req, res, next) => {
-  logger.debug(`method: ${req.method}, url: ${req.url}, Incoming request`);
+  logs.info(`method: ${req.method}, url: ${req.url}, Incoming request`);
   next();
 });
 
+
+wss.on('connection', (ws) => {
+  wsClients.add(ws);
+  ws.on('close', () => wsClients.delete(ws));
+});
 
 
 
   app.get('/api/data/config', (req, res) => {
     const configPath = path.join(dataPath, 'config.json');
-    logger.info(`Reading config from: ${configPath}`);
+    logs.info(`Reading config from: ${configPath}`);
     fs.readFile(configPath, 'utf8', (err, data) => {
       if (err) {
         console.error('Error reading config.json:', err);
@@ -219,8 +233,8 @@ export default function launchGui() {
         return res.status(500).json({ error: 'Failed to save configuration' });
       }
 
-      logger.info('Configuration saved to config.json');
-      logger.info(jsonData);
+      logs.info('Configuration saved to config.json');
+      logs.info(jsonData);
       res.json({ message: 'Configuration saved successfully', data: jsonData });
     });
   });
@@ -269,7 +283,7 @@ export default function launchGui() {
         return res.status(500).json({ error: 'Failed to save CSV' });
       }
 
-      logger.info(`Saved to ${csvPath} ${tsvRows.join('\n')}`);
+      logs.info(`Saved to ${csvPath} ${tsvRows.join('\n')}`);
 
 
       Calculator.startInvoice(csvPath, configPath);
@@ -339,7 +353,7 @@ export default function launchGui() {
       return res.status(400).json({ error: 'Invalid or empty JSON object' });
     } 
 
-    logger.info(jsonData);
+    logs.info('\n'+JSON.stringify(jsonData,null,2));
     // Load config
     fs.readFile(configPath, 'utf8', async (err, data) => {
       if (err) {
@@ -362,8 +376,8 @@ export default function launchGui() {
 
 
 
-  app.listen(port, () => {
-    logger.info(`Bills GUI is running at http://localhost:${port}`);
+  server.listen(port, () => {
+    logs.info(`Bills GUI is running at http://localhost:${port}`);
     openBrowser(`http://localhost:${port}`);
   });
 

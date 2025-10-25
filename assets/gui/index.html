@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="style.css" />
     <script src="vendors/xlsx.full.min.js"></script>
     <script src="vendors/tablesort.min.js"></script>
+    <script src="vendors/moment.min.js"></script>
 </head>
 
 <body>
@@ -183,10 +184,35 @@
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item active"><a href="#">About</a></li>
+                            <li class="breadcrumb-item active"><a href="#">Logs</a></li>
                         </ol>
                     </nav>
-                    About Content
+                     <h2>Live Winston Logs</h2>
+                     <div id="logBox"></div>
+<script>
+    const logBox = document.getElementById('logBox');
+    const socket = new WebSocket('ws://localhost:3010');
+
+    socket.addEventListener('message', (event) => {
+      const log = JSON.parse(event.data);
+      const line = `[${log.timestamp}] ${log.level.toUpperCase()}: ${log.message}`;
+      logBox.textContent += line + '\n';
+      logBox.scrollTop = logBox.scrollHeight;
+    });
+
+    socket.addEventListener('open', () => {
+      logBox.textContent += 'Connected to log stream...\n';
+    });
+
+    socket.addEventListener('close', () => {
+      logBox.textContent += 'Disconnected from log stream.\n';
+    });
+
+    socket.addEventListener('error', (err) => {
+      logBox.textContent += 'WebSocket error.\n';
+    });
+  </script>
+
                 </div>
             </div>
         </div>

@@ -34,37 +34,49 @@ th[role=columnheader]:not(.no-sort):hover:after {
 }
 
 .card-header.excel-green,
-  .card-footer.excel-green {
-    background-color: #198754; /* Light Excel-like green */
-    border-color: #fff;
-  }
+.card-footer.excel-green {
+	background-color: #198754;
+	/* Light Excel-like green */
+	border-color: #fff;
+}
 
-  .nav-tabs .nav-link {
-    color: #fff;
-  }
+.nav-tabs .nav-link {
+	color: #fff;
+}
 
-  .nav-tabs .nav-link.active {
-    background-color: #c5e0b4;
-    color: #000;
-  }
+.nav-tabs .nav-link.active {
+	background-color: #c5e0b4;
+	color: #000;
+}
 
- .excel-table th {
-	background-color: #c5e0b4; 
+.excel-table th {
+	background-color: #c5e0b4;
 	color: #000;
 	border-bottom: 2px solid #000;
 	max-height: 10px;
-  } 
-
-  .excel-table thead{
-	max-height: 10px;
-  }
-
-  .card-header.excel-green h5{
-	color:#fff
-  }
-
-  input::placeholder {
-  color: #198754;
-  font-style: italic;
 }
 
+.excel-table thead {
+	max-height: 10px;
+}
+
+.card-header.excel-green h5 {
+	color: #fff
+}
+
+input::placeholder {
+	color: #198754;
+	font-style: italic;
+}
+
+
+#logBox {
+	background-color: black;
+	color: limegreen;
+	font-family: monospace;
+	padding: 1rem;
+	height: 400px;
+	overflow-y: auto;
+	white-space: pre-wrap;
+	border: 1px solid #333;
+}

@@ -65,6 +65,12 @@ importers:
       winston:
         specifier: ^3.18.3
         version: 3.18.3
+      winston-transport:
+        specifier: ^4.9.0
+        version: 4.9.0
+      ws:
+        specifier: ^8.18.3
+        version: 8.18.3
       yargs:
         specifier: ^17.0.0
         version: 17.7.2
@@ -90,6 +96,9 @@ importers:
       '@types/winston':
         specifier: ^2.4.4
         version: 2.4.4
+      '@types/ws':
+        specifier: ^8.18.1
+        version: 8.18.1
       '@types/yargs':
         specifier: ^17.0.33
         version: 17.0.33
@@ -581,6 +590,9 @@ packages:
   '@types/winston@2.4.4':
     resolution: {integrity: sha512-BVGCztsypW8EYwJ+Hq+QNYiT/MUyCif0ouBH+flrY66O5W+KIXAMML6E/0fJpm7VjIzgangahl5S03bJJQGrZw==}
     deprecated: This is a stub types definition. winston provides its own type definitions, so you do not need this installed.
+
+  '@types/ws@8.18.1':
+    resolution: {integrity: sha512-ThVF6DCVhA8kUGy+aazFQ4kXQ7E1Ty7A3ypFOe0IcJV8O/M511G99AW24irKrW56Wt44yG9+ij8FaqoBGkuBXg==}
 
   '@types/yargs-parser@21.0.3':
     resolution: {integrity: sha512-I4q9QU9MQv4oEOz4tAHJtNz1cwuLxn2F3xcc2iV5WdqLPpUnj30aUuxt1mAxYTG+oe8CZMV/+6rU4S4gRDzqtQ==}
@@ -2006,6 +2018,18 @@ packages:
   wrappy@1.0.2:
     resolution: {integrity: sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==}
 
+  ws@8.18.3:
+    resolution: {integrity: sha512-PEIGCY5tSlUt50cqyMXfCzX+oOPqN0vuGqWzbcJ2xvnkzkq46oOpz7dQaTDBdfICb4N14+GARUDw2XV2N4tvzg==}
+    engines: {node: '>=10.0.0'}
+    peerDependencies:
+      bufferutil: ^4.0.1
+      utf-8-validate: '>=5.0.2'
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      utf-8-validate:
+        optional: true
+
   wsl-utils@0.1.0:
     resolution: {integrity: sha512-h3Fbisa2nKGPxCpm89Hk33lBLsnaGBvctQopaBSOW/uIs6FTe1ATyAnKFJrzVs9vpGdsTe73WF3V4lIsk4Gacw==}
     engines: {node: '>=18'}
@@ -2446,6 +2470,10 @@ snapshots:
   '@types/winston@2.4.4':
     dependencies:
       winston: 3.18.3
+
+  '@types/ws@8.18.1':
+    dependencies:
+      '@types/node': 24.8.1
 
   '@types/yargs-parser@21.0.3': {}
 
@@ -4112,6 +4140,8 @@ snapshots:
       strip-ansi: 6.0.1
 
   wrappy@1.0.2: {}
+
+  ws@8.18.3: {}
 
   wsl-utils@0.1.0:
     dependencies:

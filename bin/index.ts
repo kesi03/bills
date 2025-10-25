@@ -15,7 +15,8 @@ import chalk from 'chalk';
 import bumpVersion from '../lib/bump';
 import { upgrade } from '../lib/upgrade';
 import launchGui from '../lib/gui';
-import logger from '../lib/logs'
+import logs from '../lib/logs';
+import logger from '../lib/logger';
 
 const timestamp = new Date().toISOString()
   .replace(/:/g, '-')        // Replace colons for Windows compatibility
@@ -59,10 +60,10 @@ const argv = yargs(hideBin(process.argv))
       .on('end', () => {
         // Output the results as a table
         if (results.length > 0) {
-          logger.info(JSON.stringify(results));
+          logs.info(JSON.stringify(results));
           HtmlExportManager.export(results);
         } else {
-          logger.info('No matching results found.');
+          logs.info('No matching results found.');
         }
       });
   })
@@ -177,6 +178,7 @@ const argv = yargs(hideBin(process.argv))
         ]);
 
         if (section === 'none') {
+          console.log('👍 No changes made. Exiting.');
           logger.info('👍 No changes made. Exiting.');
           return;
         }
@@ -259,12 +261,13 @@ const argv = yargs(hideBin(process.argv))
     // 📋 Read text from the clipboard
     const text = clipboard.getText();
 
-    logger.info(chalk.hex('#FFA500')('_'.repeat(100)));
-    logger.info(chalk.cyanBright('\n📋 Pasted content:\n'));
-    logger.info(chalk.yellowBright(text));
-    logger.info(chalk.hex('#FFA500')('_'.repeat(100) + '\n'));
+    console.log(chalk.hex('#FFA500')('_'.repeat(100)));
+    console.log(chalk.cyanBright('\n📋 Pasted content:\n'));
+    console.log(chalk.yellowBright(text));
+    console.log(chalk.hex('#FFA500')('_'.repeat(100) + '\n'));
 
-
+    logger.info('Pasted content:')
+    logger.info(text)
 
     const { confirm } = await inquirer.prompt([
       {
@@ -276,7 +279,7 @@ const argv = yargs(hideBin(process.argv))
     ]);
 
     if (!confirm) {
-      logger.info(chalk.redBright('❌ Action cancelled.'));
+      console.log(chalk.redBright('❌ Action cancelled.'));
       return;
     }
 
@@ -315,6 +318,7 @@ const argv = yargs(hideBin(process.argv))
       if (err) {
         console.error('Error writing file:', err);
       } else {
+        console.log(`File created at ${argv.file}`);
         logger.info(`File created at ${argv.file}`);
       }
     });

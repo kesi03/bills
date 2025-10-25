@@ -1,4 +1,4 @@
-import logger from '../logs';
+import logs from '../logs';
 
 const expectedHeaders = [
     'IDs', 'Customer', 'CRN', 'Appointment Date Time', 'Assessor', 'Method',
@@ -45,7 +45,7 @@ export default class Validation {
             }
         }
 
-        logger.info('✅ Format is valid');
+        logs.info('✅ Format is valid');
         return true;
     }
 }

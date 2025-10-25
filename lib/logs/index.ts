@@ -1,9 +1,11 @@
 import { createLogger, format, transports } from 'winston';
 import path from 'path';
+import WebSocket from 'ws';
+import { WebSocketTransport } from './transport';
 
-const logFilePath = path.join(process.cwd(), 'app.log');
+export const wsClients = new Set<WebSocket>();
 
-const logger = createLogger({
+const logs = createLogger({
   level: 'info',
   format: format.combine(
     format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
@@ -16,19 +18,21 @@ const logger = createLogger({
     new transports.Console({
       format: format.combine(
         format.colorize({ all: true }),
+        format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
         format.printf(({ timestamp, level, message, stack }) => {
           return `[${timestamp}] ${level}: ${stack || message}`;
         })
       )
     }),
-    new transports.File({ filename: logFilePath }),
-    // new transports.Http({
-    //   host: 'localhost', // Replace with your log server
-    //   port: 3010,
-    //   path: '/log',
-    //   ssl: false
-    // })
-  ],
+    new transports.File({
+      filename: path.join(process.cwd(), 'app.log'),
+      format: format.combine(
+        format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+        format.json()
+      )
+    }),
+    new WebSocketTransport(wsClients)
+  ]
 });
 
-export default logger;
+export default logs;
