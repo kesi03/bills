@@ -7,8 +7,8 @@
     <link rel="icon" href="/icon.ico" type="image/x-icon">
     <title>Invoices</title>
     <meta name="xlsx-url" content="/data/invoices.xlsx">
-    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="bootstrap-icons/bootstrap-icons.css" />
+    <link rel="stylesheet" href="vendors/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="vendors/bootstrap-icons/bootstrap-icons.css" />
     <link rel="stylesheet" href="style.css" />
     <script src="vendors/xlsx.full.min.js"></script>
     <script src="vendors/tablesort.min.js"></script>
@@ -187,33 +187,8 @@
                             <li class="breadcrumb-item active"><a href="#">Logs</a></li>
                         </ol>
                     </nav>
-                     <h2>Logs</h2>
-                     <div id="logBox"></div>
-<script>
-    const logBox = document.getElementById('logBox');
-    const port = window.location.port;
-    const socket = new WebSocket(`ws://localhost${port ? `:${port}` : ''}`);
-
-    socket.addEventListener('message', (event) => {
-      const log = JSON.parse(event.data);
-      const line = `[${log.timestamp}] ${log.level.toUpperCase()}: ${log.message}`;
-      logBox.textContent += line + '\n';
-      logBox.scrollTop = logBox.scrollHeight;
-    });
-
-    socket.addEventListener('open', () => {
-      logBox.textContent += 'Connected to log stream...\n';
-    });
-
-    socket.addEventListener('close', () => {
-      logBox.textContent += 'Disconnected from log stream.\n';
-    });
-
-    socket.addEventListener('error', (err) => {
-      logBox.textContent += 'WebSocket error.\n';
-    });
-  </script>
-
+                    <h2>Logs</h2>
+                    <div id="logBox"></div>
                 </div>
             </div>
         </div>
@@ -227,10 +202,11 @@
             </footer>
         </div>
     </main>
-    <script src="bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="vendors/bootstrap/js/bootstrap.min.js"></script>
     <script src="script.js"></script>
     <!-- Modal -->
-    <div class="modal fade" id="invoiceModal" tabindex="-1" aria-labelledby="invoiceLabel" aria-hidden="true" style="min-width: 800px;font-size: smaller;">
+    <div class="modal fade" id="invoiceModal" tabindex="-1" aria-labelledby="invoiceLabel" aria-hidden="true"
+        style="min-width: 800px;font-size: smaller;">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">

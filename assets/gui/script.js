@@ -1,6 +1,3 @@
-
-
-
 function handleFormSubmit(event) {
   event.preventDefault();
   const formData = new FormData(event.target);
@@ -422,7 +419,7 @@ function toggleRowClass(val) {
 }
 
 function generateTableHTML(data, sheetId) {
-  let total = 0;  
+  let total = 0;
   if (!data || data.length === 0) return '<p>No data available</p>';
 
   let html = `<table id="table-${sheetId}" class="table table-striped table-hover sortable excel-table table-sm"><thead><tr>`;
@@ -440,14 +437,14 @@ function generateTableHTML(data, sheetId) {
       if (j === row.length - 1) {
         html += `<td style="max-width:30px;">${toggleButton(sheetId, row[0], cell)}</td>`;
       }
-      else if(j === 5 && typeof cell === 'number') {
+      else if (j === 5 && typeof cell === 'number') {
         html += `<td>${new Intl.NumberFormat('en-GB', {
           style: 'currency',
           currency: 'GBP'
         }).format(cell)}</td>`;
-      } 
-      else if(j === 3 ){
-        html+=`<td>${moment(cell, 'DD-MM-YYYY HH:mm').format('DD-MM-YYYY')}</td>`
+      }
+      else if (j === 3) {
+        html += `<td>${moment(cell, 'DD-MM-YYYY HH:mm').format('DD-MM-YYYY')}</td>`
       }
       else {
         html += `<td>${cell}</td>`;
@@ -463,7 +460,7 @@ function generateTableHTML(data, sheetId) {
     currency: 'GBP'
   }).format(total)}</td></tr>`;
 
-  
+
   html += `<tr><td colspan="2"><div class="input-group input-group-sm"><span class="input-group-text">Search</span><input class="form-control" id="table-${sheetId}-searchInput"/></div></td><td colspan="${data[0].length - 3}" class="text-end fw-bold"></td><td class="fw-bold"><div id="pagination-table-${sheetId}" class="btn-group" role="group" aria-label="pagination"></div></td></tr>`;
 
   html += '</tfoot></table>';
@@ -586,7 +583,7 @@ function generateStyledTable(worksheet) {
 
     table.appendChild(tr);
 
-    
+
   }
   const html = table.outerHTML;
 
@@ -624,8 +621,8 @@ function paginateTable(tableId, rowsPerPage = 10) {
     }
 
     if (rows.length <= rowsPerPage) {
-  pagination.parentElement.parentElement.style.display = 'none';
-}
+      pagination.parentElement.parentElement.style.display = 'none';
+    }
 
   }
 
@@ -692,6 +689,32 @@ function exclude(sheetId, key) {
     });
 }
 
+function getLogs() {
+  const logBox = document.getElementById('logBox');
+  const port = window.location.port;
+  const socket = new WebSocket(`ws://localhost${port ? `:${port}` : ''}`);
+
+  socket.addEventListener('message', (event) => {
+    const log = JSON.parse(event.data);
+    const line = `[${log.timestamp}] ${log.level.toUpperCase()}: ${log.message}`;
+    logBox.textContent += line + '\n';
+    logBox.scrollTop = logBox.scrollHeight;
+  });
+
+  socket.addEventListener('open', () => {
+    logBox.textContent += 'Connected to log stream...\n';
+  });
+
+  socket.addEventListener('close', () => {
+    logBox.textContent += 'Disconnected from log stream.\n';
+  });
+
+  socket.addEventListener('error', (err) => {
+    logBox.textContent += 'WebSocket error.\n';
+  });
+}
+
+
 
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -699,8 +722,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   fetchXLSXFile();
   getFiles();
   tabs();
+  getLogs();
   setTimeout(() => {
-    
+
 
 
     const isInteractive = ['button', 'a', 'input', 'select', 'textarea'];
@@ -719,34 +743,34 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.querySelectorAll('.excel-table').forEach(table => {
       paginateTable(table.id, 10);
       document.getElementById(table.id).addEventListener('afterSort', () => {
-        paginateTable(table.id, 10); 
+        paginateTable(table.id, 10);
       });
 
       document.getElementById(`${table.id}-searchInput`).addEventListener('input', function () {
         const query = this.value.trim().toLowerCase();
         const rows = document.querySelectorAll(`#${table.id} tbody tr`);
-        if(query.length===0){
-            paginateTable(table.id, 10); 
-        } else{
+        if (query.length === 0) {
+          paginateTable(table.id, 10);
+        } else {
           rows.forEach(row => {
-          const rowText = Array.from(row.cells)
-            .map(cell => cell.textContent.toLowerCase())
-            .join(' ');
+            const rowText = Array.from(row.cells)
+              .map(cell => cell.textContent.toLowerCase())
+              .join(' ');
 
-          row.style.display = rowText.includes(query) ? '' : 'none';
-        });
+            row.style.display = rowText.includes(query) ? '' : 'none';
+          });
         }
-        
-        
+
+
       });
 
 
-    }); 
+    });
 
   }, 500);
 });
 
-function isJsonString(str){
+function isJsonString(str) {
   try {
     const parsed = JSON.parse(str);
     return typeof parsed === 'object' && parsed !== null;
@@ -754,4 +778,5 @@ function isJsonString(str){
     return false;
   }
 }
+
 

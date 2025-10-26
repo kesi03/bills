@@ -265,7 +265,7 @@ export default class ExcelManager {
         const workbook = new ExcelJS.Workbook();
 
         if (!fs.existsSync(filePath)) {
-            console.warn(`Excel file not found at ${filePath}`);
+            logs.warn(`Excel file not found at ${filePath}`);
             return;
         }
 
@@ -277,7 +277,7 @@ export default class ExcelManager {
             const headerValues = Array.isArray(headerRow.values) ? headerRow.values : [];
             const columnIndex = headerValues.findIndex(v => String(v) === String(columnName));
             if (columnIndex === -1) {
-                console.warn(`Column "${columnName}" not found in sheet "${sheet.name}".`);
+                logs.warn(`Column "${columnName}" not found in sheet "${sheet.name}".`);
                 return -1;
             }
             return columnIndex;
@@ -286,7 +286,7 @@ export default class ExcelManager {
         const updateSheet = (sheetName: string) => {
             const sheet = workbook.getWorksheet(sheetName);
             if (!sheet) {
-                console.warn(`Sheet "${sheetName}" not found.`);
+                logs.warn(`Sheet "${sheetName}" not found.`);
                 return;
             }
 
@@ -301,7 +301,7 @@ export default class ExcelManager {
             });
 
             if (!targetRow) {
-                console.warn(`Row with ID "${payload.id}" not found in sheet "${sheetName}".`);
+                logs.warn(`Row with ID "${payload.id}" not found in sheet "${sheetName}".`);
                 return;
             }
 
@@ -320,7 +320,7 @@ export default class ExcelManager {
         const workbook = new ExcelJS.Workbook();
 
         if (!fs.existsSync(filePath)) {
-            console.warn(`Excel file not found at ${filePath}`);
+            logs.warn(`Excel file not found at ${filePath}`);
             return;
         }
 
@@ -328,7 +328,7 @@ export default class ExcelManager {
 
         let sheet = workbook.getWorksheet(payload.ref);
         if (!sheet) {
-            console.warn(`Sheet "${payload.ref}" not found.`);
+            logs.warn(`Sheet "${payload.ref}" not found.`);
             return
         }
 
