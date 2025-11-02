@@ -1,0 +1,30 @@
+name: Package invoice.ps1 as EXE
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Package PowerShell script as EXE
+        uses: MScholtes/ps2exe@v1
+        with:
+          script: invoice.ps1
+          output: invoice.exe
+          icon: assets/icon.ico
+
+      - name: Upload EXE to GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: invoice.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
