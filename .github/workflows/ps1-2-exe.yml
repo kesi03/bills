@@ -15,12 +15,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Package PowerShell script as EXE
-        uses: MScholtes/ps2exe
-        with:
-          script: invoice.ps1
-          output: invoice.exe
-          icon: assets/icon.ico
+      - name: Install PS2EXE
+        run: |
+          Install-Module -Name ps2exe -Force -Scope CurrentUser
+        shell: pwsh
+
+      - name: Convert invoice.ps1 to EXE
+        run: |
+          Invoke-PS2EXE invoice.ps1 invoice.exe -iconFile assets/invoice.ico
+        shell: pwsh
 
       - name: Upload EXE to GitHub Release
         uses: softprops/action-gh-release@v1
