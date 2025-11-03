@@ -23,7 +23,7 @@ jobs:
 
       - name: Convert invoice.ps1 to EXE
         run: |
-          Invoke-PS2EXE invoice.ps1 invoice.exe -iconFile assets/invoice.ico
+          Invoke-PS2EXE invoice.ps1 invoice.exe -iconFile assets/icon.ico
         shell: pwsh
 
       - name: Upload EXE to GitHub Release
