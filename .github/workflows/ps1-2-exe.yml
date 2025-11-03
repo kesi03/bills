@@ -1,8 +1,9 @@
-name: Package invoice.ps1 as EXE
+name: Release invoice.exe
 
 on:
   push:
-    branches: [main]
+    tags:
+      - 'v*'
 
 permissions:
   contents: write
