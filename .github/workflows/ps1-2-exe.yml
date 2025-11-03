@@ -21,14 +21,22 @@ jobs:
           Install-Module -Name ps2exe -Force -Scope CurrentUser
         shell: pwsh
 
+        
+        
       - name: Convert invoice.ps1 to EXE
+        shell: pwsh
         run: |
-          Invoke-PS2EXE invoice.ps1 invoice.exe -iconFile assets/icon.ico
+         Invoke-PS2EXE invoice.ps1 invoice.exe -iconFile assets/icon.ico
+        
+      - name: Zip the EXE file
+        run: Compress-Archive -Path invoice.exe -DestinationPath invoice.zip
         shell: pwsh
 
       - name: Upload EXE to GitHub Release
         uses: softprops/action-gh-release@v1
         with:
-          files: invoice.exe
+          files: |
+            invoice.zip
+            invoice.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
